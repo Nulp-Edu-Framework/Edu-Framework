@@ -13,7 +13,7 @@ $(function () {
     var request = { url: document.location.toString() + '/chat',
         contentType : "application/json",
         logLevel : 'debug',
-        transport : 'websocket' ,
+        transport : 'long-polling' ,
         fallbackTransport: 'long-polling'};
 
 
