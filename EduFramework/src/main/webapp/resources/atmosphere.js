@@ -10,7 +10,7 @@ $(function () {
     var socket = $.atmosphere;
 
     // We are now ready to cut the request
-    var request = { url: document.location.toString() + '/chat',
+    var request = { url: document.location.toString() + '/async/api/v1/chat',
         contentType : "application/json",
         logLevel : 'debug',
         transport : 'long-polling' ,
