@@ -1,17 +1,24 @@
 package com.nulp.eduframework.model;
 
-import java.util.Date;
+public class Message extends EduMessage {
+	
+	public static final String MESSAGE_TYPE = "chatMessage";
+	
+	private final String text;
+	private final String author;
 
-public class Message {
-    private final String text;
-    private final String author;
+	public Message(String author, String text) {
+		super(true,MESSAGE_TYPE);
+		this.author = author;
+		this.text = text;
+	}
 
-    public Message(String author, String text) {
-        this.author = author;
-        this.text = text;
-    }
+	public String getText() {
+		return text;
+	}
 
-    public String toString() {
-        return "{ \"text\" : \"" + text + "\", \"author\" : \"" + author + "\" , \"time\" : " + new Date().getTime() + "}";
-    }
+	public String getAuthor() {
+		return author;
+	}
+
 }

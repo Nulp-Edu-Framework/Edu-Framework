@@ -13,7 +13,8 @@ $(function () {
     var request = { url: document.location.toString() + '/async/api/v1/chat',
         contentType : "application/json",
         logLevel : 'debug',
-        transport : 'long-polling' ,
+        transport : 'websocket' ,
+        headers : {"eduSecureToken":"eduSecureToken"},
         fallbackTransport: 'long-polling'};
 
 
@@ -45,10 +46,11 @@ $(function () {
         }
 
             input.removeAttr('disabled').focus();
-
-            var me = json.author == author;
-            var date = typeof(json.time) == 'string' ? parseInt(json.time) : json.time;
-            addMessage(json.author, json.text, me ? 'blue' : 'black', new Date(date));
+            
+            if(json.isAuthorized == true && json.messageType === "chatMessage"){
+                var me = json.author == author;
+                addMessage(json.author, json.text, me ? 'blue' : 'black');
+            }
 
     };
 
@@ -82,10 +84,7 @@ $(function () {
         }
     });
 
-    function addMessage(author, message, color, datetime) {
-        content.append('<p><span style="color:' + color + '">' + author + '</span> @ ' +
-            + (datetime.getHours() < 10 ? '0' + datetime.getHours() : datetime.getHours()) + ':'
-            + (datetime.getMinutes() < 10 ? '0' + datetime.getMinutes() : datetime.getMinutes())
-            + ': ' + message + '</p>');
+    function addMessage(author, message, color) {
+        content.append('<p><span style="color:' + color + '">' + author + '</span> @ ' + ': ' + message + '</p>');
     }
 });
