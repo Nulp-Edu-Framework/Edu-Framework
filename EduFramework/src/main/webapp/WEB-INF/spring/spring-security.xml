@@ -14,11 +14,13 @@
 	</http>
 
 	<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<user name="test" password="test" authorities="ROLE_USER" />
-			</user-service>
-		</authentication-provider>
+	  <authentication-provider>
+		<jdbc-user-service data-source-ref="dataSource"
+		  users-by-username-query=
+		    "select username,password, enabled from users where username=?"
+		  authorities-by-username-query=
+		    "select username, role from user_roles where username =?  " />
+	  </authentication-provider>
 	</authentication-manager>
-
+	
 </beans:beans>

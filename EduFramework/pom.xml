@@ -10,7 +10,7 @@
 
       <properties>
         <spring.version>4.1.0.RELEASE</spring.version>
-        <atmosphere.version>2.2.1</atmosphere.version>
+        <atmosphere.version>2.2.3</atmosphere.version>
         <atmosphere.jquery.version>1.0.18</atmosphere.jquery.version>
         <spring-security.version>3.1.2.RELEASE</spring-security.version>
     </properties>
@@ -42,6 +42,12 @@
             <scope>test</scope>
         </dependency>
         
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        
         <!-- SPRING SECURITY -->
 		<dependency>
 			<groupId>javax.annotation</groupId>
@@ -69,28 +75,68 @@
 			<version>${spring-security.version}</version>
 		</dependency>
 
-        <!-- Servlet -->
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <version>2.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-		    <groupId>javax.servlet</groupId>
-		    <artifactId>javax.servlet-api</artifactId>
-		    <version>3.1.0</version>
-		    <scope>provided</scope>
+			
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.3.2.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.3.1.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-commons-annotations</artifactId>
+			<version>3.3.0.ga</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
+		</dependency>
+
+		<!-- @Inject -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+		
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
 		</dependency>
 	
         <!-- Atmosphere -->
@@ -99,6 +145,18 @@
             <artifactId>atmosphere-runtime</artifactId>
             <version>${atmosphere.version}</version>
         </dependency>
+        
+        <dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-compat-tomcat</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+        
+   		 <dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-compat-tomcat7</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 
         <!-- Test -->
         <dependency>
@@ -107,6 +165,18 @@
             <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-api</artifactId>
+           <version>1.5.6</version>
+           <type>jar</type>
+		</dependency>
+		<dependency>
+		   <groupId>org.slf4j</groupId>
+		   <artifactId>slf4j-simple</artifactId>
+		   <version>1.5.6</version>
+		</dependency>
         
         <dependency>
 			<groupId>com.google.code.gson</groupId>

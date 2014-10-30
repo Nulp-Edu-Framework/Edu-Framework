@@ -10,11 +10,12 @@ $(function () {
     var socket = $.atmosphere;
 
     // We are now ready to cut the request
-    var request = { url: document.location.toString() + '/async/api/v1/chat',
+    var request = { url: 'async/api/v1/chat?chatId='+chatId,
         contentType : "application/json",
         logLevel : 'debug',
         transport : 'websocket' ,
-        headers : {"eduSecureToken":"eduSecureToken"},
+        enableProtocol : true,
+        headers : {"eduSecureToken":"eduSecureToken", "senderName": senderName},
         fallbackTransport: 'long-polling'};
 
 

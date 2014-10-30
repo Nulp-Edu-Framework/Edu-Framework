@@ -18,7 +18,6 @@ public class AtmosphereResolver implements HandlerMethodArgumentResolver{
 	public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         Meteor m = Meteor.build(nativeWebRequest.getNativeRequest(HttpServletRequest.class));
         AtmosphereResource atmosphereResource = m.getAtmosphereResource();
-        atmosphereResource.addEventListener(new AsyncChatEventListener());
         return atmosphereResource;
 	}
 

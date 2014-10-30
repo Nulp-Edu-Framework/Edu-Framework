@@ -51,6 +51,10 @@
         <span id="status">Connecting...</span>
         <input type="text" id="input" disabled="disabled"/>
     </div>
+    <script type="text/javascript">
+    	chatId = ${chatId};
+    	senderName = '${senderName}';
+    </script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="resources/jquery.atmosphere.js"></script>
     <script type="text/javascript" src="resources/atmosphere.js"></script>
