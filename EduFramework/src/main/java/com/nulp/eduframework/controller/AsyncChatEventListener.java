@@ -9,14 +9,17 @@ import org.atmosphere.cpr.BroadcasterFactory;
 import com.google.gson.Gson;
 import com.nulp.eduframework.model.EduMessage;
 import com.nulp.eduframework.util.Secure;
+import com.nulp.eduframework.util.Constants.ConnectionType;
 
 public class AsyncChatEventListener implements AtmosphereResourceEventListener{
 	
-	private Integer chatId;
+	private Integer lectureId;
 	private BroadcasterFactory factory;
+	private ConnectionType connectionType;
 	
-	public AsyncChatEventListener(Integer chatId, AtmosphereResource atmosphereResource){
-		this.chatId = chatId;
+	public AsyncChatEventListener(Integer lectureId, ConnectionType connectionType, AtmosphereResource atmosphereResource){
+		this.lectureId = lectureId;
+		this.connectionType = connectionType;
 		this.factory = atmosphereResource.getAtmosphereConfig().getBroadcasterFactory();
 	}
 
@@ -38,7 +41,8 @@ public class AsyncChatEventListener implements AtmosphereResourceEventListener{
 		String response =  gson.toJson((new EduMessage(Secure.isAuthorized(atmosphereResource))));
 		atmosphereResource.getResponse().write(response);
 
-        Broadcaster chatChannel = factory.lookup("/chat_"+chatId,true);
+        Broadcaster chatChannel = factory.lookup("/" + connectionType.getName() + "_" + lectureId, true);
+        System.out.println("CONNECT TO : " + "/" + connectionType.getName() + "_" + lectureId);
         chatChannel.addAtmosphereResource(atmosphereResource);
 	}
 

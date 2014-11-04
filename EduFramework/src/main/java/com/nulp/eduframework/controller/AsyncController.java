@@ -15,25 +15,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.nulp.eduframework.model.EduMessage;
 import com.nulp.eduframework.model.Message;
-import com.nulp.eduframework.util.Constants;
+import com.nulp.eduframework.model.PresentationMessage;
+import com.nulp.eduframework.util.Constants.PresentationDirection;
 import com.nulp.eduframework.util.Secure;
+import com.nulp.eduframework.util.Constants.ConnectionType;
 
 @Controller
 @RequestMapping("/async/api/v1")
 public class AsyncController {
 		
     @RequestMapping(value = "/chat", method = RequestMethod.GET)
-    @ResponseBody public void onConnectToChat(@RequestParam(value = "chatId") Integer chatId, AtmosphereResource atmosphereResource) throws IOException {
-    	System.out.println("connected to : " + chatId);
-    	atmosphereResource.addEventListener(new AsyncChatEventListener(chatId,atmosphereResource));
+    @ResponseBody public void onConnectToChat(@RequestParam(value = "lectureId") Integer lectureId, AtmosphereResource atmosphereResource) throws IOException {
+    	atmosphereResource.addEventListener(new AsyncChatEventListener(lectureId, ConnectionType.LECTURE, atmosphereResource));
         atmosphereResource.resumeOnBroadcast(atmosphereResource.transport() == AtmosphereResource.TRANSPORT.LONG_POLLING).suspend();
     }
 
     @RequestMapping(value = "/chat", method = RequestMethod.POST)
-    @ResponseBody public void onSendMessageToChat(@RequestParam(value = "chatId") Integer chatId, AtmosphereResource atmosphereResource) throws IOException{
-    	System.out.println("post on : " + chatId);
+    @ResponseBody public void onSendMessageToChat(@RequestParam(value = "lectureId") Integer lectureId, AtmosphereResource atmosphereResource) throws IOException{
     	BroadcasterFactory factory = atmosphereResource.getAtmosphereConfig().getBroadcasterFactory();
-    	Broadcaster chatChannel = factory.lookup("/chat_"+chatId, true);
+    	Broadcaster chatChannel = factory.lookup("/" + ConnectionType.LECTURE.getName() + "_" + lectureId, true);
+    	
+    	System.out.println("SENT TO : " + "/" + ConnectionType.LECTURE + "_" + lectureId);
 
     	Gson gson = new Gson();
     	AtmosphereRequest atmosphereRequest = atmosphereResource.getRequest();
@@ -47,6 +49,34 @@ public class AsyncController {
 
     	} else {
     		String response =  gson.toJson((new EduMessage(false)));
+    		atmosphereResource.getResponse().write(response);
+    	}
+
+    }
+    
+    @RequestMapping(value = "/presentation", method = RequestMethod.GET)
+    @ResponseBody public void onConnectToPresentation(@RequestParam(value = "lectureId") Integer lectureId, AtmosphereResource atmosphereResource) throws IOException {
+    	atmosphereResource.addEventListener(new AsyncChatEventListener(lectureId, ConnectionType.PRESENTATION, atmosphereResource));
+        atmosphereResource.resumeOnBroadcast(atmosphereResource.transport() == AtmosphereResource.TRANSPORT.LONG_POLLING).suspend();
+    }
+    
+    @RequestMapping(value = "/presentation", method = RequestMethod.POST)
+    @ResponseBody public void onPresentationEvent(@RequestParam(value = "lectureId") Integer lectureId, @RequestParam(value = "preDirection") String preDirection, AtmosphereResource atmosphereResource) throws IOException{
+    	BroadcasterFactory factory = atmosphereResource.getAtmosphereConfig().getBroadcasterFactory();
+    	Broadcaster chatChannel = factory.lookup("/" + ConnectionType.PRESENTATION.getName() + "_" + lectureId, true);
+
+    	Gson gson = new Gson();
+    	String response = null;
+    	
+    	if(Secure.isAuthorized(atmosphereResource)){
+    		if("preDirection".equals(PresentationDirection.NEXT)){
+    			response =  gson.toJson((new PresentationMessage(2, 4)));
+    		} else if ("preDirection".equals(PresentationDirection.PREV)){
+    			response =  gson.toJson((new PresentationMessage(1, 4)));
+    		}
+    		chatChannel.broadcast(response);
+    	} else {
+    		response =  gson.toJson((new EduMessage(false)));
     		atmosphereResource.getResponse().write(response);
     	}
 
