@@ -2,6 +2,7 @@ package com.nulp.eduframework.service;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +26,26 @@ public class LectureChatServiceImpl implements LectureChatService {
 		return lectureChatDao.getLectureChatById(id);
 	}
 
-	@Override
+	@Transactional
 	public void addLectureChat(LectureChat lectureChat) {
 		lectureChatDao.addLectureChat(lectureChat);
 	}
+
+	@Override
+	public List<LectureChat> lectureChatsList(Session session) {
+		return lectureChatDao.lectureChatsList(session);
+	}
+
+	@Override
+	public LectureChat getLectureChatById(Integer id, Session session) {
+		return lectureChatDao.getLectureChatById(id, session);
+	}
+
+	@Override
+	public void addLectureChat(LectureChat lectureChat, Session session) {
+		lectureChatDao.addLectureChat(lectureChat, session);
+	}
+	
+	
 
 }

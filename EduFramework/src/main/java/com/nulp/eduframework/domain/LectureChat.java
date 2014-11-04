@@ -16,6 +16,12 @@ public class LectureChat {
 	
 	@Column(name = "name")
 	private String name;
+	
+	@Column(name = "currentStep")
+	private Integer currentStep;
+	
+	@Column(name = "stepCount")
+	private Integer stepCount;
 
 	public String getName() {
 		return name;
@@ -28,5 +34,31 @@ public class LectureChat {
 	public Integer getId() {
 		return id;
 	}
-		
+
+	public Integer getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(Integer currentStep) {
+		this.currentStep = currentStep;
+	}
+
+	public Integer getStepCount() {
+		return stepCount;
+	}
+
+	public void setStepCount(Integer stepCount) {
+		this.stepCount = stepCount;
+	}
+	
+	public Integer nextStep () {
+		Integer nextStep = currentStep + 1;
+		return nextStep < stepCount ? nextStep : -1;
+	}
+	
+	public Integer prevStep () {
+		Integer prevStep = currentStep - 1;
+		return prevStep >= 0 ? prevStep : -1;
+	}
+
 }

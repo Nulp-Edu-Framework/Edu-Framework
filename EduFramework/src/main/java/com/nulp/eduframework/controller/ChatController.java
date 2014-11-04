@@ -26,6 +26,8 @@ public class ChatController {
     	LectureChat chat = new LectureChat();
     	
     	chat.setName(chatName);
+    	chat.setCurrentStep(0);
+    	chat.setStepCount(10);
     	
     	lectureChatService.addLectureChat(chat);
         

@@ -33,6 +33,12 @@ public class Constants {
 			public String getName() {
 				return "prev";
 			}
+		},
+		
+		START {
+			public String getName() {
+				return "start";
+			}
 		};
 		
 		public abstract String getName(); 

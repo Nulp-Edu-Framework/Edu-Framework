@@ -2,7 +2,7 @@ CREATE  TABLE CHAT (
   id INT(11) NOT NULL AUTO_INCREMENT,
   name VARCHAR(45) NOT NULL ,
   currentStep INT(11),
-  stepCount INT(11),
+  stepCount INT(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id));
 
 CREATE  TABLE users (

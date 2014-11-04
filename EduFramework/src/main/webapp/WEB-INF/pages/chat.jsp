@@ -46,6 +46,9 @@
     </style>
 </head>
 <body>
+	<button id="next" type="button">NEXT</button> 
+	<button id="prev" type="button">PREV</button>
+	
     <div id="content"></div>
     <div>
         <span id="status">Connecting...</span>
@@ -58,5 +61,6 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="resources/jquery.atmosphere.js"></script>
     <script type="text/javascript" src="resources/atmosphere.js"></script>
+    <script type="text/javascript" src="resources/presentation.js"></script>
 </body>
 </html>
