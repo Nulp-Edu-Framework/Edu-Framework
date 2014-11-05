@@ -25,7 +25,7 @@ $(function () {
         status.text('Print message:');
     };
 
-    <!-- For demonstration of how you can customize the fallbackTransport based on the browser -->
+
     request.onTransportFailure = function(errorMsg, request) {
         jQuery.atmosphere.info(errorMsg);
         if ( window.EventSource ) {

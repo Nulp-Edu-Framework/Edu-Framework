@@ -35,9 +35,9 @@ public class Constants {
 			}
 		},
 		
-		START {
+		RESTART {
 			public String getName() {
-				return "start";
+				return "restart";
 			}
 		};
 		

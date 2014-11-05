@@ -2,6 +2,10 @@ $(function () {
 
     var next = $('#next');
     var prev = $('#prev');
+    var restart = $('#restart');
+    var currentStepContainer = $('#currentStep');
+    var stepCountContainer = $('#stepCount');
+
     var socket = $.atmosphere;
 
     // We are now ready to cut the request
@@ -30,7 +34,18 @@ $(function () {
 
     request.onMessage = function (response) {
         var message = response.responseBody;
-        alert(message);
+        try {
+            var json = jQuery.parseJSON(message);
+        } catch (e) {
+            console.log('This doesn\'t look like a valid JSON: ', message.data);
+            return;
+        }
+            
+            if(json.messageType === "presentationStatusMessage"){
+                var currentStep = json.currentStep;
+                var stepCount = json.stepCount;
+                changeStep(currentStep, stepCount);
+            }
     };
 
     request.onClose = function(response) {
@@ -50,5 +65,14 @@ $(function () {
     prev.click(function(e) {
     	subSocket.push(jQuery.stringifyJSON({preDirection : "prev"}));
     });
+    
+    restart.click(function(e) {
+    	subSocket.push(jQuery.stringifyJSON({preDirection : "restart"}));
+    });
+    
+    function changeStep(currentStep, stepCount) {
+    	currentStepContainer.html(currentStep);
+    	stepCountContainer.html(stepCount);
+    }
 
 });

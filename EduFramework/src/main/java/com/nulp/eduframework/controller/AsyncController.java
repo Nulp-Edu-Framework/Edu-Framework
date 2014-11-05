@@ -10,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -97,16 +96,19 @@ public class AsyncController {
     		} else if (preEventMessage.getPreDirection().equals(PresentationDirection.PREV.getName())){
     			Integer prevStep = lecture.prevStep();
     			lecture.setCurrentStep(prevStep >= 0 ? prevStep : currentStep);
+    		} else if (preEventMessage.getPreDirection().equals(PresentationDirection.RESTART.getName())){
+    			lecture.setCurrentStep(0);
     		}
 
     		lectureChatService.addLectureChat(lecture, session);
+    		System.out.println("currentStep " + lecture.getCurrentStep());
 			response =  gson.toJson((new PresentationStatusMessage(lecture.getCurrentStep(), lecture.getStepCount())));
     		chatChannel.broadcast(response);
     	} else {
     		response =  gson.toJson((new EduMessage(false)));
     		atmosphereResource.getResponse().write(response);
     	}
-    	
+
     	session.flush();
     	session.close();
     }

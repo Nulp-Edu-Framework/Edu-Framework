@@ -18,17 +18,17 @@ public class LectureChatServiceImpl implements LectureChatService {
 	 
 	@Transactional
 	public List<LectureChat> lectureChatsList() {
-		return lectureChatDao.lectureChatsList();
+		return lectureChatDao.lectureChatsList(null);
 	}
 
 	@Transactional
 	public LectureChat getLectureChatById(Integer id) {
-		return lectureChatDao.getLectureChatById(id);
+		return lectureChatDao.getLectureChatById(id, null);
 	}
 
 	@Transactional
 	public void addLectureChat(LectureChat lectureChat) {
-		lectureChatDao.addLectureChat(lectureChat);
+		lectureChatDao.addLectureChat(lectureChat, null);
 	}
 
 	@Override

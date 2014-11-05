@@ -21,6 +21,10 @@
             margin-right: auto;
         }
 
+		#presentation {
+			text-align: center;
+		}
+        
         #content {
             padding: 5px;
             background: #ddd;
@@ -46,8 +50,17 @@
     </style>
 </head>
 <body>
-	<button id="next" type="button">NEXT</button> 
-	<button id="prev" type="button">PREV</button>
+	<div id="presentation">
+		<button id="restart" type="button">RESTART</button> 
+		<button id="prev" type="button">PREV</button>
+		<button id="next" type="button">NEXT</button>
+		<div>
+			Current slide : <span id="currentStep"></span>
+		</div>
+		<div>
+			Slides count : <span id="stepCount"></span>
+		</div>
+	</div>
 	
     <div id="content"></div>
     <div>

@@ -16,38 +16,26 @@ public class LectureChatDaoImpl implements LectureChatDao {
 	private SessionFactory sessionFactory;
 	
 	@SuppressWarnings("unchecked")
-	public List<LectureChat> lectureChatsList() {
-		Session session = sessionFactory.getCurrentSession();
-		return session.createQuery("from LectureChat").list();
-	}
-
-	@Override
-	public LectureChat getLectureChatById(Integer id) {
-		Session session = sessionFactory.getCurrentSession();
-		LectureChat lectureChat = (LectureChat) session.load(LectureChat.class, id);
-		return lectureChat;
-	}
-
-	@Override
-	public void addLectureChat(LectureChat lectureChat) {
-		Session session = sessionFactory.getCurrentSession();
-		session.saveOrUpdate(lectureChat);
-	}
-
-	@SuppressWarnings("unchecked")
 	public List<LectureChat> lectureChatsList(Session session) {
+		session = checkSession(session);
 		return session.createQuery("from LectureChat").list();
 	}
 
 	@Override
 	public LectureChat getLectureChatById(Integer id, Session session) {
+		session = checkSession(session);
 		LectureChat lectureChat = (LectureChat) session.load(LectureChat.class, id);
 		return lectureChat;
 	}
 
 	@Override
 	public void addLectureChat(LectureChat lectureChat, Session session) {
+		session = checkSession(session);
 		session.saveOrUpdate(lectureChat);
+	}
+	
+	private Session checkSession(Session session){
+		return session == null ? sessionFactory.getCurrentSession() : session;
 	}
 
 }
