@@ -6,5 +6,8 @@
 <hibernate-configuration>
 	<session-factory>
 	    <mapping class="com.nulp.eduframework.domain.LectureChat" />
+	    <mapping class="com.nulp.eduframework.domain.User" />
+	    <mapping class="com.nulp.eduframework.domain.UserDetails" />
+	    <mapping class="com.nulp.eduframework.domain.LectureMessage" />
 	</session-factory>
 </hibernate-configuration>

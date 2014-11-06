@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.nulp.eduframework.domain.LectureChat;
 
 @Repository
-public class LectureChatDaoImpl implements LectureChatDao {
-
-	@Autowired
-	private SessionFactory sessionFactory;
+public class LectureChatDaoImpl extends EduFrameworkDao implements LectureChatDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<LectureChat> lectureChatsList(Session session) {
@@ -32,10 +29,6 @@ public class LectureChatDaoImpl implements LectureChatDao {
 	public void addLectureChat(LectureChat lectureChat, Session session) {
 		session = checkSession(session);
 		session.saveOrUpdate(lectureChat);
-	}
-	
-	private Session checkSession(Session session){
-		return session == null ? sessionFactory.getCurrentSession() : session;
 	}
 
 }

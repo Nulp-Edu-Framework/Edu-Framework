@@ -1,9 +1,14 @@
 package com.nulp.eduframework.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,6 +27,10 @@ public class LectureChat {
 	
 	@Column(name = "stepCount")
 	private Integer stepCount;
+	
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id", nullable = true)
+	private List<LectureMessage> lectureMessages;
 
 	public String getName() {
 		return name;
@@ -51,6 +60,10 @@ public class LectureChat {
 		this.stepCount = stepCount;
 	}
 	
+	public List<LectureMessage> getLectureMessages() {
+		return lectureMessages;
+	}
+
 	public Integer nextStep () {
 		Integer nextStep = currentStep + 1;
 		return nextStep < stepCount ? nextStep : -1;

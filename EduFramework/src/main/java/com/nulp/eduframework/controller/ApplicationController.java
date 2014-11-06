@@ -9,13 +9,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.nulp.eduframework.domain.LectureMessage;
+import com.nulp.eduframework.domain.User;
 import com.nulp.eduframework.service.LectureChatService;
+import com.nulp.eduframework.service.LectureMessageService;
+import com.nulp.eduframework.service.UserService;
 
 @Controller
 public class ApplicationController {
 	
 	@Autowired
 	private LectureChatService lectureChatService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private LectureMessageService lectureMessageService;
 
     @RequestMapping(value="/", method = RequestMethod.GET)
     public ModelAndView main() {
@@ -28,7 +38,20 @@ public class ApplicationController {
     	ModelAndView model = new ModelAndView("chat");
 		model.addObject("chatId", chatId);
 		model.addObject("senderName", principal.getName());
-		System.out.println(chatId + " " + principal.getName());
+		User user = userService.getUserByUSerName(principal.getName());
+		
+		LectureMessage message = new LectureMessage("hello");
+		
+		message.setUser(user);
+		message.setLecture(lectureChatService.getLectureChatById(chatId));
+		
+		System.out.println(message.getUser());
+		System.out.println(message.getLecture());
+		
+		lectureMessageService.addLectureMessage(message);
+		
+		System.out.println(chatId + " " + user.getUserDetails().getLastname());
+		System.out.println("user : " + user.getUserDetails().getUser().getUsername());
         return model;
     }
     
