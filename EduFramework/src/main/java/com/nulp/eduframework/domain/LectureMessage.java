@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.nulp.eduframework.model.Message;
+
 @Entity
 @Table(name = "lecture_message")
 public class LectureMessage {
@@ -58,6 +60,10 @@ public class LectureMessage {
 
 	public void setLecture(LectureChat lecture) {
 		this.lectureChat = lecture;
+	}
+	
+	public Message toMessage (){
+		return new Message(user.getUsername(), text);
 	}
 
 }

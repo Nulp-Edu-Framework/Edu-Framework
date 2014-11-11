@@ -45,12 +45,20 @@ $(function () {
             console.log('This doesn\'t look like a valid JSON: ', message.data);
             return;
         }
-
             input.removeAttr('disabled').focus();
             
-            if(json.isAuthorized == true && json.messageType === "chatMessage"){
-                var me = json.author == author;
-                addMessage(json.author, json.text, me ? 'blue' : 'black');
+            if(jQuery.isArray(json)){
+            	jQuery.each(json, function(idx, obj) {
+                	if(obj.isAuthorized == true && obj.messageType === "chatMessage"){
+                		var me = obj.author == author;
+                		addMessage(obj.author, obj.message, me ? 'blue' : 'black');
+                	} 
+                });
+            } else {
+            	if(json.isAuthorized == true && json.messageType === "chatMessage"){
+            		var me = json.author == author;
+            		addMessage(json.author, json.message, me ? 'blue' : 'black');
+            	}            	
             }
 
     };
@@ -70,12 +78,7 @@ $(function () {
         if (e.keyCode === 13) {
             var msg = $(this).val();
 
-            // First message is author's name
-            if (author == null) {
-                author = msg;
-            }
-
-            subSocket.push(jQuery.stringifyJSON({ author: author, message: msg }));
+            subSocket.push(jQuery.stringifyJSON({ author: senderName, message: msg }));
             $(this).val('');
 
             input.attr('disabled', 'disabled');

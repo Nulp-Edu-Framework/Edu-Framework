@@ -1,25 +1,46 @@
 package com.nulp.eduframework.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.cpr.AtmosphereResourceEventListener;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nulp.eduframework.domain.LectureChat;
+import com.nulp.eduframework.domain.LectureMessage;
 import com.nulp.eduframework.model.EduMessage;
+import com.nulp.eduframework.model.Message;
+import com.nulp.eduframework.service.LectureChatService;
+import com.nulp.eduframework.service.LectureMessageService;
+import com.nulp.eduframework.service.UserService;
 import com.nulp.eduframework.util.Secure;
 import com.nulp.eduframework.util.Constants.ConnectionType;
 
 public class AsyncChatEventListener implements AtmosphereResourceEventListener{
-	
+
+	private LectureMessageService lectureMessageService;
+	private LectureChatService lectureChatService;
+	private SessionFactory sessionFactory;	
 	private Integer lectureId;
 	private BroadcasterFactory factory;
 	private ConnectionType connectionType;
 	
-	public AsyncChatEventListener(Integer lectureId, ConnectionType connectionType, AtmosphereResource atmosphereResource){
+	public AsyncChatEventListener(Integer lectureId, ConnectionType connectionType, AtmosphereResource atmosphereResource,
+			SessionFactory sessionFactory, LectureChatService lectureChatService, LectureMessageService lectureMessageService){
 		this.lectureId = lectureId;
 		this.connectionType = connectionType;
+		this.sessionFactory = sessionFactory;
+		this.lectureMessageService = lectureMessageService;
+		this.lectureChatService = lectureChatService;
 		this.factory = atmosphereResource.getAtmosphereConfig().getBroadcasterFactory();
 	}
 
@@ -38,8 +59,23 @@ public class AsyncChatEventListener implements AtmosphereResourceEventListener{
 		System.out.println("onSuspend");
 		Gson gson = new Gson();
 		AtmosphereResource atmosphereResource = event.getResource();
-		String response =  gson.toJson((new EduMessage(Secure.isAuthorized(atmosphereResource))));
+		EduMessage responseMessage = new EduMessage(Secure.isAuthorized(atmosphereResource));
+		String response =  gson.toJson(responseMessage);
 		atmosphereResource.getResponse().write(response);
+		
+		if(connectionType.equals(ConnectionType.LECTURE) && responseMessage.getIsAuthorized()){
+			Session session = sessionFactory.openSession();
+			LectureChat lecture = lectureChatService.getLectureChatById(lectureId, session);
+			List<LectureMessage> lectureMessages = lectureMessageService.getAllMessagesByLecture(lecture, session);
+			List<Message> messages = new ArrayList<Message>();
+			for (LectureMessage lectureMessage : lectureMessages) {
+				messages.add(lectureMessage.toMessage());
+			}
+			System.out.println("CHAT MESSAGES : " + gson.toJson(messages, new TypeToken<List<Message>>(){}.getType()));
+			atmosphereResource.getResponse().write(gson.toJson(messages, new TypeToken<List<Message>>(){}.getType()));
+			session.flush();
+			session.close();
+		}
 
         Broadcaster chatChannel = factory.lookup("/" + connectionType.getName() + "_" + lectureId, true);
         System.out.println("CONNECT TO : " + "/" + connectionType.getName() + "_" + lectureId);

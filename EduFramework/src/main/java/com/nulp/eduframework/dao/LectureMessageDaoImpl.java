@@ -21,7 +21,7 @@ public class LectureMessageDaoImpl extends EduFrameworkDao implements LectureMes
 	@SuppressWarnings("unchecked")
 	public List<LectureMessage> getAllMessagesByLecture(LectureChat lecture, Session session) {
 		session = checkSession(session);
-		Query query = session.createQuery("select lecture from LectureChat as lecture where user.lecture = :lecture");
+		Query query = session.createQuery("select lectureMessage from LectureMessage as lectureMessage where lectureMessage.lectureChat = :lecture");
 		query.setParameter("lecture", lecture);
 		return query.list();
 	}
