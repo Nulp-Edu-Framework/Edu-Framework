@@ -8,14 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
 import com.nulp.eduframework.controller.dto.LectureDTO;
 import com.nulp.eduframework.domain.LectureChat;
 import com.nulp.eduframework.service.LectureChatService;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
  
@@ -61,8 +64,7 @@ public class ChatController {
 	    private String filePath = "/presentation.zip";
 	
 	@RequestMapping(value="/get/presentation", method = RequestMethod.GET)
-	@ResponseBody public byte[] doDownload(HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+	@ResponseBody public byte[] doDownload(HttpServletRequest request, HttpServletResponse response) throws IOException {
  
         // get absolute path of the application
         ServletContext context = request.getSession().getServletContext();
@@ -91,4 +93,37 @@ public class ChatController {
         return bytes;
  
     }
+	
+	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+	public @ResponseBody String uploadFileHandler(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+
+		if (!file.isEmpty()) {
+			try {
+				byte[] bytes = file.getBytes();
+
+				ServletContext context = request.getSession().getServletContext();
+				String rootPath = context.getRealPath("");
+				File dir = new File(rootPath + File.separator + "lectures");
+				
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+				
+				// Create the file on server
+				String uploadedFileName = dir.getAbsolutePath() + File.separator + file.getOriginalFilename();
+				System.out.println("Uploaded : " + uploadedFileName);
+				File serverFile = new File(uploadedFileName);
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+				
+				stream.write(bytes);
+				stream.close();
+
+				return "You successfully uploaded file=" + file.getOriginalFilename();
+			} catch (Exception e) {
+				return "You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage();
+			}
+		} else {
+			return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";
+		}
+	}
 }
