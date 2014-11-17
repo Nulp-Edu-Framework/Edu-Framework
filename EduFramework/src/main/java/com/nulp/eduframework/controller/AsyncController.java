@@ -25,9 +25,9 @@ import com.nulp.eduframework.model.PresentationEventMessage;
 import com.nulp.eduframework.model.PresentationStatusMessage;
 import com.nulp.eduframework.service.LectureChatService;
 import com.nulp.eduframework.service.LectureMessageService;
+import com.nulp.eduframework.service.SecureService;
 import com.nulp.eduframework.service.UserService;
 import com.nulp.eduframework.util.Constants.PresentationDirection;
-import com.nulp.eduframework.util.Secure;
 import com.nulp.eduframework.util.Constants.ConnectionType;
 
 @Controller
@@ -46,9 +46,12 @@ public class AsyncController {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
+	@Autowired
+	private SecureService secureUtil;
+	
     @RequestMapping(value = "/chat", method = RequestMethod.GET)
     @ResponseBody public void onConnectToChat(@RequestParam(value = "lectureId") Integer lectureId, AtmosphereResource atmosphereResource) throws IOException {
-    	AsyncChatEventListener chatEventListener = new AsyncChatEventListener(lectureId, ConnectionType.LECTURE, atmosphereResource, sessionFactory, lectureChatService, lectureMessageService);
+    	AsyncChatEventListener chatEventListener = new AsyncChatEventListener(lectureId, ConnectionType.LECTURE, atmosphereResource, sessionFactory, lectureChatService, lectureMessageService, secureUtil);
     	atmosphereResource.addEventListener(chatEventListener);
         atmosphereResource.resumeOnBroadcast(atmosphereResource.transport() == AtmosphereResource.TRANSPORT.LONG_POLLING).suspend();
     }
@@ -64,8 +67,9 @@ public class AsyncController {
     	Gson gson = new Gson();
     	AtmosphereRequest atmosphereRequest = atmosphereResource.getRequest();
     	
-    	if(Secure.isAuthorized(atmosphereResource)){
+    	if(secureUtil.isAuthorized(atmosphereResource, session)){
             String body = atmosphereRequest.getReader().readLine().trim();
+            System.out.println("BODY : " + body);
             Message message = gson.fromJson(body, Message.class);
             saveMessage(lectureId, message, session);
             String response =  gson.toJson(message);
@@ -81,7 +85,7 @@ public class AsyncController {
     
     @RequestMapping(value = "/presentation", method = RequestMethod.GET)
     @ResponseBody public void onConnectToPresentation(@RequestParam(value = "lectureId") Integer lectureId, AtmosphereResource atmosphereResource) throws IOException {
-    	AsyncChatEventListener chatEventListener = new AsyncChatEventListener(lectureId, ConnectionType.PRESENTATION, atmosphereResource, sessionFactory, lectureChatService, lectureMessageService);
+    	AsyncChatEventListener chatEventListener = new AsyncChatEventListener(lectureId, ConnectionType.PRESENTATION, atmosphereResource, sessionFactory, lectureChatService, lectureMessageService, secureUtil);
     	atmosphereResource.addEventListener(chatEventListener);
     	atmosphereResource.resumeOnBroadcast(atmosphereResource.transport() == AtmosphereResource.TRANSPORT.LONG_POLLING).suspend();
     }
@@ -96,7 +100,7 @@ public class AsyncController {
     	String response = null;
     	AtmosphereRequest atmosphereRequest = atmosphereResource.getRequest();
     	
-    	if(Secure.isAuthorized(atmosphereResource)){
+    	if(secureUtil.isAuthorized(atmosphereResource, session)){
     		
     		LectureChat lecture = lectureChatService.getLectureChatById(lectureId, session);
     		Integer currentStep = lecture.getCurrentStep();

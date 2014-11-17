@@ -20,6 +20,9 @@ public class ApplicationController {
 	
 	@Autowired
 	private LectureChatService lectureChatService;
+	
+	@Autowired
+	private UserService userService;
 
     @RequestMapping(value="/", method = RequestMethod.GET)
     public ModelAndView main() {
@@ -32,6 +35,7 @@ public class ApplicationController {
     	ModelAndView model = new ModelAndView("chat");
 		model.addObject("chatId", chatId);
 		model.addObject("senderName", principal.getName());
+		model.addObject("secureToken", userService.getUserByUSerName(principal.getName()).getSecureToken());
         return model;
     }
     

@@ -13,12 +13,11 @@
 			<beans:bean class="com.nulp.eduframework.controller.AtmosphereResolver" />
 		</mvc:argument-resolvers>
 	</mvc:annotation-driven>
-
+		
 	<context:component-scan base-package="com.nulp.eduframework" />
 	
 	<mvc:resources mapping="/resources/**" location="/resources/" />
-
-		<beans:bean
+	<beans:bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/pages/" />
 		<beans:property name="suffix" value=".jsp" />

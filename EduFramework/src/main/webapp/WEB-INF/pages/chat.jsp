@@ -70,6 +70,7 @@
     <script type="text/javascript">
     	chatId = ${chatId};
     	senderName = '${senderName}';
+    	secureToken = '${secureToken}';
     </script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="resources/jquery.atmosphere.js"></script>

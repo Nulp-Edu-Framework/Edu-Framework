@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nulp.eduframework.controller.dto.LectureDTO;
 import com.nulp.eduframework.dao.LectureChatDao;
 import com.nulp.eduframework.domain.LectureChat;
 
@@ -44,6 +45,16 @@ public class LectureChatServiceImpl implements LectureChatService {
 	@Override
 	public void addLectureChat(LectureChat lectureChat, Session session) {
 		lectureChatDao.addLectureChat(lectureChat, session);
+	}
+
+	@Override
+	public List<LectureDTO> getLectureDTOList() {
+		return lectureChatDao.getLectureDTOList(null);
+	}
+
+	@Override
+	public List<LectureDTO> getLectureDTOList(Session session) {
+		return lectureChatDao.getLectureDTOList(session);
 	}
 	
 	

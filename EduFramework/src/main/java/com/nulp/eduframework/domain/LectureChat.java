@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.nulp.eduframework.model.PresentationStatusMessage;
+
 @Entity
 @Table(name = "CHAT")
 public class LectureChat {
@@ -29,7 +31,7 @@ public class LectureChat {
 	private Integer stepCount;
 	
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id", nullable = true)
+	@JoinColumn(name = "lecture_id", nullable = true)
 	private List<LectureMessage> lectureMessages;
 
 	public String getName() {
@@ -72,6 +74,10 @@ public class LectureChat {
 	public Integer prevStep () {
 		Integer prevStep = currentStep - 1;
 		return prevStep >= 0 ? prevStep : -1;
+	}
+	
+	public PresentationStatusMessage getPresentationStatus (){
+		return new PresentationStatusMessage(currentStep, stepCount);
 	}
 
 }

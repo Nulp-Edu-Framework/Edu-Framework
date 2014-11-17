@@ -19,7 +19,7 @@ public class LectureMessage {
 	@Id
 	@GeneratedValue
 	@Column(name = "message_id")
-	private Integer id;
+	private Integer message_id;
 	
 	@Column(name = "message")
 	private String text;

@@ -28,6 +28,9 @@ public class User {
 	@Column(name = "password")
 	private String password;
 	
+	@Column(name = "secureToken")
+	private String secureToken;
+	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = true)
 	private List<LectureMessage> lecutreMessages;
@@ -73,6 +76,14 @@ public class User {
 
 	public Integer getId() {
 		return id;
+	}
+
+	public String getSecureToken() {
+		return secureToken;
+	}
+
+	public void setSecureToken(String secureToken) {
+		this.secureToken = secureToken;
 	}
 
 }

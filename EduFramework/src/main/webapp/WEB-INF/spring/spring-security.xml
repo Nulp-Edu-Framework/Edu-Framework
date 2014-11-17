@@ -8,9 +8,22 @@
 						http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
 	<http pattern="/async/api/**" security="none"/>
-
+	
+	<beans:bean 
+	    id="EduLogoutSuccessHandler"
+		class="com.nulp.eduframework.service.EduLogoutSuccessHandler">
+	</beans:bean>
+	
+	<beans:bean 
+	    id="EduAuthenticationSuccessHandler"
+		class="com.nulp.eduframework.service.EduAuthenticationSuccessHandler">
+	</beans:bean>
+		
 	<http auto-config="true">
+	    <logout success-handler-ref="EduLogoutSuccessHandler" />
+	    <form-login authentication-success-handler-ref="EduAuthenticationSuccessHandler" />
 		<intercept-url pattern="/**" access="ROLE_USER" />
+		<http-basic/>
 	</http>
 
 	<authentication-manager>

@@ -36,7 +36,7 @@ CREATE  TABLE lecture_message (
   lecture_id INT(11) NOT NULL,
   message VARCHAR(255) NOT NULL ,
   PRIMARY KEY (message_id),
-  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (user_id),
+  CONSTRAINT fk_user_lecture_id FOREIGN KEY (user_id) REFERENCES users (user_id),
   CONSTRAINT fk_lecture_id FOREIGN KEY (lecture_id) REFERENCES CHAT (id)
 );
 
@@ -52,3 +52,6 @@ VALUES ('test2', 'ROLE_USER');
 
 INSERT INTO users_details(user_id,firstname,lastname)
 VALUES (1, 'test_first', 'test_last');
+
+INSERT INTO users_details(user_id,firstname,lastname)
+VALUES (2, 'test_2', 'test_l2');

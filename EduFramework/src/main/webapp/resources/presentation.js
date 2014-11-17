@@ -14,7 +14,7 @@ $(function () {
         logLevel : 'debug',
         transport : 'websocket' ,
         enableProtocol : true,
-        headers : {"eduSecureToken":"eduSecureToken"},
+        headers : {"eduSecureToken":secureToken},
         fallbackTransport: 'long-polling'};
 
 

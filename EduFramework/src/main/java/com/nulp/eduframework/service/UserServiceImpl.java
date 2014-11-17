@@ -24,4 +24,14 @@ public class UserServiceImpl implements UserService {
 		return userDao.getUserByUserName(userName, session);
 	}
 
+	@Transactional
+	public void addUser(User user, Session session) {
+		userDao.addUser(user, session);
+	}
+
+	@Transactional
+	public void addUser(User user) {
+		userDao.addUser(user, null);
+	}
+
 }
