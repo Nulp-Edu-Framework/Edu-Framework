@@ -1,15 +1,65 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE HTML>
+<!--
+	Minimaxing by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Edu Framework</title>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-</head>
-<body>
-	<h4>Lectures list :</h4>
+	<head>
+		<title>Є - СИСТЕМ</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link href="http://fonts.googleapis.com/css?family=Ubuntu+Condensed" rel="stylesheet">
+		
+		<script type="text/javascript" src="resources/jquery.min.js"></script>
+		<script type="text/javascript" src="resources/skel.min.js"></script>
+		<script type="text/javascript" src="resources/skel-layers.min.js"></script>
+		<script type="text/javascript" src="resources/init.js"></script>
 
-	<ul>
+		<noscript>
+			<link rel="stylesheet" href="resources/skel.css" />
+			<link rel="stylesheet" href="resources/style.css" />
+			<link rel="stylesheet" href="resources/style-desktop.css" />
+		</noscript>
+
+		<!--[if lte IE 9]><link rel="stylesheet" href="resources/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><script src="resources/html5shiv.js"></script><![endif]-->
+	</head>
+	<body>
+		<div id="header-wrapper">
+			<div class="container">
+				<div class="row">
+					<div class="12u">
+						
+						<header id="header">
+							<h1><a href="#" id="logo">Є - СИСТЕМ</a></h1>
+							<nav id="nav">
+								<a href="/EduFramework/" class="current-page-item">Головна</a>
+								<a href="lecture"">Лекції</a>
+								<a href="twocolumn2.html">Веб Клієнт</a>
+							</nav>
+						</header>
+					
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="main">
+			<div class="container">
+			
+			
+			<div class="row main-row">
+					<div class="4u">
+					
+						<section>
+							<h2>список лекцій : </h2>
+							<div>
+
+	<ul class="link-list">
 		<c:forEach items="${lecturesList}" var="item">
 		    <li>
 		    	<a href='chat?chatId=${item.getId()}'>${item.getName()}</a>
@@ -18,9 +68,14 @@
 	</ul>
 	
 	<form action="api/v1/chat/create" id="postForm">
-		Lecture name: <input type="text" name="chatName">
-		<input type="submit" value="Search">
+		<h4>Назва лекції: </h4><input type="text" name="chatName">
+		<input class="button" type="submit" value="Створити">
 	</form>
+	
+	<form method="POST" action="api/v1/chat/uploadFile" enctype="multipart/form-data">
+        <h4>Файл для завантаження: </h4> <input type="file" name="file"><br />
+        <input class="button" type="submit" value="Завантажити"> <p>Натисніть кнопку для завантаження файлу</p>
+    </form>
 
 
 	<div id="result"></div>
@@ -43,11 +98,20 @@
 		});
 	</script>
 	
-   <form method="POST" action="api/v1/chat/uploadFile" enctype="multipart/form-data">
-        File to upload: <input type="file" name="file"><br />
-        Name: <input type="text" name="name"><br /> <br />
-        <input type="submit" value="Upload"> Press here to upload the file!
-    </form>
+							</div>
+						</section>
 
-</body>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="footer-wrapper">
+			<div class="container">
+				
+						<div id="copyright">
+							&copy; Untitled. All rights reserved. | Design: <a href="http://html5up.net">HTML5 UP</a>
+						</div>
+			</div>
+		</div>
+	</body>
 </html>
