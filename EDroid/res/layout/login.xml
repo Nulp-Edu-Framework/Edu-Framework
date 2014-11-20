@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Login Form -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dip"
+    android:background="@drawable/tile_bg">
+
+    <!-- Email Label -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/edt_username"
+        android:textColor="#372c24" />
+
+    <EditText
+        android:id="@+id/loginUserName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dip"
+        android:layout_marginTop="5dip"
+        android:inputType="text"
+        android:singleLine="true" />
+    <!-- Password Label -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/edt_password"
+        android:textColor="#372c24" />
+
+    <EditText
+        android:id="@+id/loginPassword"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:inputType="textPassword"
+        android:singleLine="true" />
+    <!-- Login button -->
+    
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:background="@color/bg_btn_join"
+        android:text="@string/btn_login"
+        android:textColor="@color/white" />
+
+</LinearLayout><!-- Login Form Ends -->
+
