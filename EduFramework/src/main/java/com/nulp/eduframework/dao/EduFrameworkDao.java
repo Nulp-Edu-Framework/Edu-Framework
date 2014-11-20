@@ -14,4 +14,6 @@ public class EduFrameworkDao {
 	protected Session checkSession(Session session){
 		return session == null ? sessionFactory.getCurrentSession() : session;
 	}
+	
+	
 }

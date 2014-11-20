@@ -20,7 +20,7 @@
 		<script type="text/javascript" src="resources/skel-layers.min.js"></script>
 		<script type="text/javascript" src="resources/init.js"></script>
 
-		<noscript>
+<noscript>
 			<link rel="stylesheet" href="resources/skel.css" />
 			<link rel="stylesheet" href="resources/style.css" />
 			<link rel="stylesheet" href="resources/style-desktop.css" />
@@ -53,7 +53,7 @@
 			
 			
 			<div class="row main-row">
-					<div class="4u">
+					<div class="12u">
 					
 						<section>
 							<h2>список лекцій : </h2>
@@ -67,20 +67,30 @@
 		</c:forEach>
 	</ul>
 	
-	<form action="api/v1/chat/create" id="postForm">
-		<h4>Назва лекції: </h4><input type="text" name="chatName">
-		<input class="button" type="submit" value="Створити">
-	</form>
+	<h4>Створити лекцію : </h4>
 	
-	<form method="POST" action="api/v1/chat/uploadFile" enctype="multipart/form-data">
-        <h4>Файл для завантаження: </h4> <input type="file" name="file"><br />
-        <input class="button" type="submit" value="Завантажити"> <p>Натисніть кнопку для завантаження файлу</p>
-    </form>
+	<div id="loadPresentationContent">
+		<form class="createLecture" method="POST" action="api/v1/chat/uploadFile" enctype="multipart/form-data">
+				<p class="load-content-lecture-lable inline">Назва лекції : </p>
+				<input class="inline load-content-lecture-input" type="text" name="chatName">
+				<br class="clearBoth" />
+			 	<p class="load-content-file-lable inline">Вибрати ресурс презентації : </p>
+			 	<input class="button inline loadBtn" type="button" value="Вибрати"/>
+			 	<input id="chooseFileBtn" class="inline load-content-file-input" type="file" name="file"/>
+			 	<input class="button inline loadedBtn" type="submit" value="Завантажити"/>
+			<br class="clearBoth" />
+    	</form>
+	</div>
 
 
 	<div id="result"></div>
 	
 	<script>
+	
+	$("#chooseFileBtn").change(function(){
+		 //alert("choose : " + this.value);
+	});
+	
 		$( "#postForm" ).submit(function( event ) {
 			
 			event.preventDefault();
@@ -96,6 +106,7 @@
 				$( "#result" ).empty().append( data );
 			});
 		});
+		
 	</script>
 	
 							</div>

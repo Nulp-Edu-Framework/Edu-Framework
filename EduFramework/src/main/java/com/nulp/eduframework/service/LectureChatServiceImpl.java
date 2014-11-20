@@ -32,27 +32,27 @@ public class LectureChatServiceImpl implements LectureChatService {
 		lectureChatDao.addLectureChat(lectureChat, null);
 	}
 
-	@Override
+	@Transactional
 	public List<LectureChat> lectureChatsList(Session session) {
 		return lectureChatDao.lectureChatsList(session);
 	}
 
-	@Override
+	@Transactional
 	public LectureChat getLectureChatById(Integer id, Session session) {
 		return lectureChatDao.getLectureChatById(id, session);
 	}
 
-	@Override
+	@Transactional
 	public void addLectureChat(LectureChat lectureChat, Session session) {
 		lectureChatDao.addLectureChat(lectureChat, session);
 	}
 
-	@Override
+	@Transactional
 	public List<LectureDTO> getLectureDTOList() {
 		return lectureChatDao.getLectureDTOList(null);
 	}
 
-	@Override
+	@Transactional
 	public List<LectureDTO> getLectureDTOList(Session session) {
 		return lectureChatDao.getLectureDTOList(session);
 	}

@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.nulp.eduframework.controller.dto.LectureDTO;
 import com.nulp.eduframework.domain.LectureChat;
 import com.nulp.eduframework.service.LectureChatService;
+import com.nulp.eduframework.util.PresentationConverter;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -22,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
  
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,20 +35,6 @@ public class ChatController {
 
 	@Autowired
 	private LectureChatService lectureChatService;
-
-	@RequestMapping(value="/create", method = RequestMethod.POST)
-	@ResponseBody public String create(@RequestParam(value = "chatName") String chatName) {
-		Gson gson = new Gson();
-    	LectureChat chat = new LectureChat();
-    	
-    	chat.setName(chatName);
-    	chat.setCurrentStep(0);
-    	chat.setStepCount(10);
-    	
-    	lectureChatService.addLectureChat(chat);
-        
-    	return gson.toJson(chat);
-    }
 
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody public String list() {
@@ -61,10 +49,10 @@ public class ChatController {
 	    /**
 	     * Path of the file to be downloaded, relative to application's directory
 	     */
-	    private String filePath = "/presentation.zip";
+	    private String filePath = "/lectures";
 	
 	@RequestMapping(value="/get/presentation", method = RequestMethod.GET)
-	@ResponseBody public byte[] doDownload(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	@ResponseBody public byte[] doDownload(@RequestParam("lectureId") String lectureId, HttpServletRequest request, HttpServletResponse response) throws IOException {
  
         // get absolute path of the application
         ServletContext context = request.getSession().getServletContext();
@@ -72,7 +60,7 @@ public class ChatController {
         System.out.println("appPath = " + appPath);
  
         // construct the complete absolute path of the file
-        String fullPath = appPath + filePath;      
+        String fullPath = appPath + filePath + File.separator + lectureId + "/lecture.zip";      
         File downloadFile = new File(fullPath);
         
         byte[] bytes = org.springframework.util.FileCopyUtils.copyToByteArray(downloadFile);
@@ -95,7 +83,7 @@ public class ChatController {
     }
 	
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
-	public @ResponseBody String uploadFileHandler(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+	public @ResponseBody String uploadFileHandler(HttpServletRequest request, @RequestParam("file") MultipartFile file, @RequestParam(value = "chatName") String chatName) {
 
 		if (!file.isEmpty()) {
 			try {
@@ -108,16 +96,40 @@ public class ChatController {
 				if (!dir.exists()) {
 					dir.mkdirs();
 				}
-				
-				// Create the file on server
-				String uploadedFileName = dir.getAbsolutePath() + File.separator + file.getOriginalFilename();
-				System.out.println("Uploaded : " + uploadedFileName);
-				File serverFile = new File(uploadedFileName);
-				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-				
-				stream.write(bytes);
-				stream.close();
 
+				Integer lectureId = createLecture(chatName);
+				
+				if(lectureId != null) {
+				
+					// Create the file on server
+					String dirPath =  dir.getAbsolutePath() + File.separator + lectureId;
+
+					File lectureDir = new File(dirPath);
+					lectureDir.delete();
+					lectureDir.mkdir();
+					
+					String uploadedFileName = dirPath + File.separator + file.getOriginalFilename();
+					System.out.println("Uploaded : " + uploadedFileName);
+					File serverFile = new File(uploadedFileName);
+					BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+					
+					stream.write(bytes);
+					stream.close();
+					
+					System.out.println("START FILE CONVERSION : " + dirPath);
+					Integer slidesCount = PresentationConverter.convertPresentationToImages(uploadedFileName, dirPath);
+					
+					System.out.println("READED : " + slidesCount);
+
+					LectureChat chat = lectureChatService.getLectureChatById(lectureId);
+
+					chat.setStepCount(slidesCount);
+					lectureChatService.addLectureChat(chat);
+			    	
+			    	createLecture("DUPLICATE");
+				
+				}
+				
 				return "You successfully uploaded file=" + file.getOriginalFilename();
 			} catch (Exception e) {
 				return "You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage();
@@ -126,4 +138,17 @@ public class ChatController {
 			return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";
 		}
 	}
+	
+	private Integer createLecture ( String lectureName) {
+    	LectureChat chat = new LectureChat();
+    	
+    	chat.setName(lectureName);
+    	chat.setCurrentStep(0);
+    	chat.setStepCount(10);
+    	
+    	lectureChatService.addLectureChat(chat);
+    	        
+    	return chat.getId();
+    }
+	
 }
