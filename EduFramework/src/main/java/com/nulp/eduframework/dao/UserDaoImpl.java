@@ -31,6 +31,7 @@ public class UserDaoImpl extends EduFrameworkDao implements UserDao {
 	public void addUser(User user, Session session) {
 		session = checkSession(session);
 		session.saveOrUpdate(user);
+		session.flush();
 	}
 
 }

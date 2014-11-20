@@ -31,6 +31,7 @@ public class LectureChatDaoImpl extends EduFrameworkDao implements LectureChatDa
 	public void addLectureChat(LectureChat lectureChat, Session session) {
 		session = checkSession(session);
 		session.saveOrUpdate(lectureChat);
+		session.flush();
 	}
 
 	@SuppressWarnings("unchecked")

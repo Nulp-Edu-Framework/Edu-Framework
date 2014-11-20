@@ -125,8 +125,6 @@ public class ChatController {
 
 					chat.setStepCount(slidesCount);
 					lectureChatService.addLectureChat(chat);
-			    	
-			    	createLecture("DUPLICATE");
 				
 				}
 				
@@ -144,7 +142,7 @@ public class ChatController {
     	
     	chat.setName(lectureName);
     	chat.setCurrentStep(0);
-    	chat.setStepCount(10);
+    	chat.setStepCount(0);
     	
     	lectureChatService.addLectureChat(chat);
     	        

@@ -16,6 +16,7 @@ public class LectureMessageDaoImpl extends EduFrameworkDao implements LectureMes
 	public void addLectureMessage(LectureMessage message, Session session) {
 		session = checkSession(session);
 		session.saveOrUpdate(message);
+		session.flush();
 	}
 
 	@SuppressWarnings("unchecked")
