@@ -12,6 +12,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -52,6 +53,7 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 	private final String serverAddress;
 	private final Gson gson;
 	private String springSession;
+	private String secureToken;
 	
 	public static EduFrameworkAPIService getInstance(String serverAddress) {
 		if (apiServiceInstance == null) {
@@ -65,15 +67,15 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 		this.httpClient = AndroidHttpClient.newInstance("Android");
 		this.springSession = null;
 		this.gson = new Gson();
+		this.secureToken = null;
 	}
 	
 	public String getSpringSession() {
 		return springSession;
 	}
 
-	public Boolean login(String userName, String password) {
+	public Boolean login(String userName, String password, final OnFinishTask onFinish) {
 		final HttpPost loginPost = new HttpPost(serverAddress + LOGIN_URL);
-		HttpResponse response = null;
 
         try {
 
@@ -84,37 +86,66 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 
             loginPost.setEntity(new UrlEncodedFormEntity(arguments));
             
-            HttpPostTask httpPostTask = new HttpPostTask();
-            httpPostTask.setUp(httpClient);
-            response = httpPostTask.execute(loginPost).get();
+            new AsyncWorkTask().execute(new OnFinishTask() {
+				
+				@Override
+				public void onFinish(Object object) {
+					HttpResponse response = (HttpResponse) object;
+					onFinish.onFinish(checkResponseLoginStatus(response));
+					
+				}
+				
+				@Override
+				public Object doInBackground() {
+					return postHttpRequest(httpClient, loginPost);
+				}
+			});
         } catch (Exception e) {
         	Log.e("EduFrameworkAPIService", "login error");
         	loginPost.abort();
+        	return false;
         }
 
-        return checkResponseLoginStatus(response);
+        return true;
 	}
 	
 	public String getSecureToken() {
+		return secureToken;
+	}
+	
+	public Boolean getSecureToken(final OnFinishTask onFinish) {
 		final HttpGet getSecureToken = new HttpGet(serverAddress + API_V1 + API_SECURE + GET_SECURETOKEN_URL);
-		HttpResponse response = null;
-		String secureToken = null;
         try {
-        	
-        	HttpGetTask httpGetTast = new HttpGetTask();
-        	httpGetTast.setUp(httpClient);
-			response = httpGetTast.execute(getSecureToken).get();
 			
-			if(checkResponseStatus(response)){
-				final HttpEntity entity = response.getEntity();
-				secureToken = EntityUtils.toString(entity, "UTF-8");								
-			}
+			new AsyncWorkTask().execute(new OnFinishTask() {
+				
+				@Override
+				public void onFinish(Object object) {
+					HttpResponse response = (HttpResponse) object;
+					if(checkResponseStatus(response)){
+						final HttpEntity entity = response.getEntity();
+						try {
+							String token = EntityUtils.toString(entity, "UTF-8");
+							secureToken = token;
+							onFinish.onFinish(secureToken);
+						} catch (Exception e) {
+							onFinish.onFinish(null);
+						}							
+					}
+				}
+				
+				@Override
+				public Object doInBackground() {
+					return getHttpRequest(httpClient, getSecureToken);
+				}
+			});
 
 		} catch (Exception e) {
 			getSecureToken.abort();
+			return false;
 		}
 
-		return secureToken;
+		return true;
 	}
 	
 	public Boolean getAllLectures(final OnFinishTask onFinish) {
@@ -234,6 +265,17 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 		try {
 			get.setHeader(COOKIE_HEADER, springSession);
 			response = httpClient.execute(get);
+		} catch (IOException e) {
+			Log.e("HttpGetTask", "get error");
+		}
+		return response;
+	}
+	
+	private HttpResponse postHttpRequest (AndroidHttpClient httpClient, HttpPost post) {
+		HttpResponse response = null;
+		try {
+			post.setHeader(COOKIE_HEADER, springSession);
+			response = httpClient.execute(post);
 		} catch (IOException e) {
 			Log.e("HttpGetTask", "get error");
 		}

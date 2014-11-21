@@ -4,6 +4,7 @@ import com.eduframework.edroid.R;
 import com.eduframework.edroid.service.EduFrameworkAPIService;
 import com.eduframework.edroid.service.EduFrameworkAPIServiceImpl;
 import com.eduframework.edroid.util.AppConstants;
+import com.eduframework.edroid.util.OnFinishTask;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -42,13 +43,33 @@ public class LoginActivity extends Activity {
 				String userLogin = userName.getText().toString();
 				String userPassword = password.getText().toString();
 				
-				Boolean authResult = eduAPIService.login(userLogin, userPassword);
-				
-				if(authResult) {
-					eduAPIService.getSecureToken();
-					Intent userActivity = new Intent(getApplicationContext(), UserActivity.class);
-					startActivity(userActivity);
-				}
+				eduAPIService.login(userLogin, userPassword, new OnFinishTask() {
+					
+					@Override
+					public void onFinish(Object object) {
+						Boolean authResult = (Boolean) object;
+						if(authResult) {
+							eduAPIService.getSecureToken(new OnFinishTask() {
+								
+								@Override
+								public void onFinish(Object object) {
+									Intent userActivity = new Intent(getApplicationContext(), UserActivity.class);
+									startActivity(userActivity);
+								}
+								
+								@Override
+								public Object doInBackground() {
+									return null;
+								}
+							});
+						}
+					}
+					
+					@Override
+					public Object doInBackground() {
+						return null;
+					}
+				});
 			}
 			
 		});
