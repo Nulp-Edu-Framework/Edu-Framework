@@ -188,6 +188,11 @@ public class MainActivity extends Activity {
 	                //if the other fragment is visible, hide it.
 	                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("two")).commit();
 	            }
+	            
+	            if(fragmentManager.findFragmentByTag("three") != null){
+	                //if the other fragment is visible, hide it.
+	                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("three")).commit();
+	            }
 	            break;
 	        case 1:
 	            if(fragmentManager.findFragmentByTag("two") != null) {
@@ -201,18 +206,51 @@ public class MainActivity extends Activity {
 	                //if the other fragment is visible, hide it.
 	                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("one")).commit();
 	            }
+	            if(fragmentManager.findFragmentByTag("three") != null){
+	                //if the other fragment is visible, hide it.
+	                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("three")).commit();
+	            }
+	            break;
+	        case 2:
+	            if(fragmentManager.findFragmentByTag("three") != null) {
+	                //if the fragment exists, show it.
+	                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("three")).commit();
+	            } else {
+	                //if the fragment does not exist, add it to fragment manager.
+	                fragmentManager.beginTransaction().add(R.id.frame_container, new AudioFragment(), "three").commit();
+	            }
+	            
+	            if(fragmentManager.findFragmentByTag("one") != null){
+	                //if the other fragment is visible, hide it.
+	                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("one")).commit();
+	            }
+	            
+	            if(fragmentManager.findFragmentByTag("two") != null){
+	                //if the other fragment is visible, hide it.
+	                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("two")).commit();
+	            }
 	            break;
 		default:
-            if(fragmentManager.findFragmentByTag("two") != null) {
+            if(fragmentManager.findFragmentByTag("one") != null) {
                 //if the fragment exists, show it.
-                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("two")).commit();
+                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("one")).commit();
             } else {
                 //if the fragment does not exist, add it to fragment manager.
-                fragmentManager.beginTransaction().add(R.id.frame_container, new FindPeopleFragment(eduChatService), "two").commit();
+                fragmentManager.beginTransaction().add(R.id.frame_container, new FindPeopleFragment(eduChatService), "one").commit();
             }
             if(fragmentManager.findFragmentByTag("one") != null){
                 //if the other fragment is visible, hide it.
                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("one")).commit();
+            }
+            
+            if(fragmentManager.findFragmentByTag("two") != null){
+                //if the other fragment is visible, hide it.
+                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("two")).commit();
+            }
+            
+            if(fragmentManager.findFragmentByTag("three") != null){
+                //if the other fragment is visible, hide it.
+                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("three")).commit();
             }
             break;
 		}

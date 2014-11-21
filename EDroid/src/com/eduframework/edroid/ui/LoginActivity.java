@@ -8,6 +8,7 @@ import com.eduframework.edroid.util.AppConstants;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.SyncStateContract.Constants;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class LoginActivity extends Activity {
+	
+	PowerManager.WakeLock wakeLock;
 	
 	private EditText userName;
 	private EditText password;
