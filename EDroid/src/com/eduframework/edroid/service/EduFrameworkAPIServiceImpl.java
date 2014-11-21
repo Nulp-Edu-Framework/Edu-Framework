@@ -20,6 +20,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.eduframework.edroid.dto.LectureDTO;
+import com.eduframework.edroid.dto.UserDTO;
 import com.eduframework.edroid.util.AppConstants;
 import com.eduframework.edroid.util.AsyncWorkTask;
 import com.eduframework.edroid.util.OnFinishTask;
@@ -40,12 +41,14 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 	private final static String LOGIN_URL = "/j_spring_security_check";
 	private final static String GET_SECURETOKEN_URL = "/securetoken";
 	private final static String GET_LIST_URL = "/list";
+
 	private final static String GET_URL = "/get";
 	private final static String GET_PRESENTATION_CONTENT_URL = "/presentation?lectureId=";
 	
 	private final static String SET_COOKIE_HEADER = "Set-Cookie";
 	private final static String COOKIE_HEADER = "Cookie";
 	private final static String SPRING_SESSION_NAME = "JSESSIONID";
+	private static final String GET_USER_URL = "/user";
 	
 	private static EduFrameworkAPIService apiServiceInstance = null;
 	
@@ -54,6 +57,7 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 	private final Gson gson;
 	private String springSession;
 	private String secureToken;
+	private UserDTO currentUser;
 	
 	public static EduFrameworkAPIService getInstance(String serverAddress) {
 		if (apiServiceInstance == null) {
@@ -68,6 +72,7 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 		this.springSession = null;
 		this.gson = new Gson();
 		this.secureToken = null;
+		currentUser = null;
 	}
 	
 	public String getSpringSession() {
@@ -125,9 +130,32 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 					if(checkResponseStatus(response)){
 						final HttpEntity entity = response.getEntity();
 						try {
-							String token = EntityUtils.toString(entity, "UTF-8");
-							secureToken = token;
-							onFinish.onFinish(secureToken);
+							final String token = EntityUtils.toString(entity, "UTF-8");
+							new AsyncWorkTask().execute(new OnFinishTask() {
+								
+								@Override
+								public void onFinish(Object object) {
+									getLoggedUser(token, new OnFinishTask() {
+										
+										@Override
+										public void onFinish(Object object) {
+											secureToken = token;
+											currentUser = (UserDTO) object;
+											onFinish.onFinish(secureToken);
+										}
+										
+										@Override
+										public Object doInBackground() {
+											return null;
+										}
+									});
+								}
+								
+								@Override
+								public Object doInBackground() { 
+									return null;
+								}
+							});
 						} catch (Exception e) {
 							onFinish.onFinish(null);
 						}							
@@ -152,9 +180,6 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 		final HttpGet getLecturesList = new HttpGet(serverAddress + API_V1 + API_LECTURE + GET_LIST_URL);
 
 		try {
-
-			HttpGetTask httpGetTast = new HttpGetTask();
-			httpGetTast.setUp(httpClient);
 			
 			new AsyncWorkTask().execute(new OnFinishTask() {
 				
@@ -233,6 +258,42 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 
 		return true;
 	}
+	
+	@Override
+	public Boolean getLoggedUser(String token, final OnFinishTask onFinish) {
+		final HttpGet getLoggedUser = new HttpGet(serverAddress + API_V1 + API_SECURE + GET_USER_URL + "?token=" + token);
+        try {
+			
+			new AsyncWorkTask().execute(new OnFinishTask() {
+				
+				@Override
+				public void onFinish(Object object) {
+					HttpResponse response = (HttpResponse) object;
+					if(checkResponseStatus(response)){
+						final HttpEntity entity = response.getEntity();
+						try {
+							String user = EntityUtils.toString(entity, "UTF-8");
+							UserDTO userDto = gson.fromJson(user, UserDTO.class);
+							onFinish.onFinish(userDto);
+						} catch (Exception e) {
+							onFinish.onFinish(null);
+						}							
+					}
+				}
+				
+				@Override
+				public Object doInBackground() {
+					return getHttpRequest(httpClient, getLoggedUser);
+				}
+			});
+
+		} catch (Exception e) {
+			getLoggedUser.abort();
+			return false;
+		}
+
+		return true;
+	}
 
 	private Boolean checkResponseLoginStatus(HttpResponse response) {
 		Header[] header = response.getHeaders(SET_COOKIE_HEADER);
@@ -260,6 +321,10 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
         }
     }
 	
+	public UserDTO getCurrentUser() {
+		return currentUser;
+	}
+	
 	private HttpResponse getHttpRequest (AndroidHttpClient httpClient, HttpGet get) {
 		HttpResponse response = null;
 		try {
@@ -281,48 +346,5 @@ public class EduFrameworkAPIServiceImpl implements EduFrameworkAPIService {
 		}
 		return response;
 	}
-	
-	public class HttpGetTask extends AsyncTask<HttpGet, Void, HttpResponse> {
 
-		private AndroidHttpClient httpClient;
-		
-		public void setUp(AndroidHttpClient httpClient) {
-			this.httpClient = httpClient;
-		}
-		@Override
-		protected HttpResponse doInBackground(HttpGet... params) {
-			HttpResponse response = null;
-			try {
-				HttpGet get = params[0];
-				get.setHeader(COOKIE_HEADER, springSession);
-				response = httpClient.execute(get);
-			} catch (IOException e) {
-				Log.e("HttpGetTask", "get error");
-			}
-			return response;
-		}
-
-	}
-	
-	public class HttpPostTask extends AsyncTask<HttpPost, Void, HttpResponse> {
-
-		private AndroidHttpClient httpClient;
-		
-		public void setUp(AndroidHttpClient httpClient) {
-			this.httpClient = httpClient;
-		}
-		@Override
-		protected HttpResponse doInBackground(HttpPost... params) {
-			HttpResponse response = null;
-			try {
-				HttpPost post = params[0];
-				post.setHeader(COOKIE_HEADER, springSession);
-				response = httpClient.execute(post);
-			} catch (IOException e) {
-				Log.e("HttpGetTask", "get error");
-			}
-			return response;
-		}
-
-	}
 }

@@ -4,6 +4,13 @@
     android:layout_height="fill_parent"
     android:background="@drawable/tile_bg" >
 
+        <ProgressBar
+        android:id="@+id/loadingprgBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="visible" />
+        
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,8 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text="@string/edt_full_username"
-                android:textColor="#372c24"
-                android:textSize="16sp" />
+                android:textColor="@color/title_gray"
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/edtUserFullName"
@@ -28,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text=""
-                android:textColor="#372c24"
+                android:textColor="@color/title_gray"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -37,13 +44,15 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="@string/edt_active_lectures"
-            android:textColor="#372c24"
-            android:textSize="16sp" />
+            android:textColor="@color/title_gray"
+            android:textSize="17sp" />
 
         <ListView
             android:id="@+id/lecture_list_view"
+            android:layout_margin="5dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:listSelector="@drawable/list_selector" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -4,6 +4,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
+import com.nulp.eduframework.controller.dto.UserDTO;
 import com.nulp.eduframework.domain.User;
 
 @Repository
@@ -33,5 +34,16 @@ public class UserDaoImpl extends EduFrameworkDao implements UserDao {
 		session.saveOrUpdate(user);
 		session.flush();
 	}
+
+	@Override
+	public UserDTO getUserDTOBySecureToken(String secureToken, Session session) {
+		session = checkSession(session);
+		String queryStr = "select NEW com.nulp.eduframework.controller.dto.UserDTO(user.username, user.userDetails.firstname, user.userDetails.lastname) from User as user where user.secureToken = :secureToken";
+		Query query = session.createQuery(queryStr);
+		query.setParameter("secureToken", secureToken);
+		return (UserDTO) query.uniqueResult();
+	}
+
+
 
 }

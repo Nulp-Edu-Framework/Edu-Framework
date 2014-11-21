@@ -64,7 +64,7 @@ public class AudioSubscriber extends Thread{
             
             int minBufferSize =  AudioTrack.getMinBufferSize( pipe.getSampleRate(), pipe.getChannelConfig(), pipe.getEncoding());
             
-            audioTrack = new AudioTrack(AudioManager.STREAM_VOICE_CALL, 
+            audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 
 						            		pipe.getSampleRate(), 
 						            		pipe.getChannelConfig(), 
 						            		pipe.getEncoding(), 

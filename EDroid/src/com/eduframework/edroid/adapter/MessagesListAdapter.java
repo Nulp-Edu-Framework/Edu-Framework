@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.eduframework.edroid.R;
 import com.eduframework.edroid.model.Message;
+import com.eduframework.edroid.service.EduFrameworkAPIService;
+import com.eduframework.edroid.service.EduFrameworkAPIServiceImpl;
+import com.eduframework.edroid.util.AppConstants;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -18,6 +21,8 @@ public class MessagesListAdapter extends BaseAdapter {
 
 	private Context context;
 	private List<Message> messagesItems;
+	private static final EduFrameworkAPIService eduAPIService = EduFrameworkAPIServiceImpl.getInstance(AppConstants.SERVER_ADDRESS);
+	
 
 	public MessagesListAdapter(Context context, List<Message> navDrawerItems) {
 		this.context = context;
@@ -54,7 +59,7 @@ public class MessagesListAdapter extends BaseAdapter {
 				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
 		// Identifying the message owner
-		if (messagesItems.get(position).getAuthor().equals("test")) {
+		if (messagesItems.get(position).getAuthor().equals(eduAPIService.getCurrentUser().getUserLogin())) {
 			// message belongs to you, so load the right aligned layout
 			convertView = mInflater.inflate(R.layout.list_item_message_right,
 					null);

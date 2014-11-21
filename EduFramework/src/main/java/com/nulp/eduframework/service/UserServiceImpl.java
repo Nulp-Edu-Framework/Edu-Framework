@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nulp.eduframework.controller.dto.UserDTO;
 import com.nulp.eduframework.dao.UserDao;
 import com.nulp.eduframework.domain.User;
 
@@ -22,6 +23,16 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public User getUserByUSerName(String userName, Session session) {
 		return userDao.getUserByUserName(userName, session);
+	}
+
+	@Transactional
+	public UserDTO getUserByToken(String token) {
+		return userDao.getUserDTOBySecureToken(token, null);
+	}
+	
+	@Transactional
+	public UserDTO getUserByToken(String token, Session session) {
+		return userDao.	getUserDTOBySecureToken(token, session);
 	}
 
 	@Transactional

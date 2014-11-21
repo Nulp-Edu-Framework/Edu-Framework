@@ -106,13 +106,4 @@ public class PipeFactory {
 		return pipe;
 	}
 
-	
-	public AudioInputPipe getVideoInputPipe(String publisherString) {
-		String command = ffmpegCommand
-				+ " -analyzeduration 0 -i pipe:0 -re -an -r 25 -f flv -b 100k -s 320x240 "
-				+ publisherString;
-		FFMPEGAudioInputPipe pipe = new FFMPEGAudioInputPipe(command);
-		return pipe;
-	}
-
 }

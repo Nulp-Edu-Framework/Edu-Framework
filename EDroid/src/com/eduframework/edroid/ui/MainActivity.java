@@ -61,6 +61,8 @@ public class MainActivity extends Activity {
 	
 	private Boolean isFirstRun = true;
 	
+	private Integer lectionId;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class MainActivity extends Activity {
 		StrictMode.setThreadPolicy(policy);
 		
 		Intent intent = getIntent();
-		Integer lectionId = intent.getIntExtra("LECTURE_ID", -1);
+		lectionId = intent.getIntExtra("LECTURE_ID", -1);
 		
 		eduPresentationService = new EduFrameworkPresentationServiceImpl(lectionId);
 		eduChatService = new EduFrameworkChatServiceImpl(lectionId);
@@ -200,7 +202,7 @@ public class MainActivity extends Activity {
 	                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("two")).commit();
 	            } else {
 	                //if the fragment does not exist, add it to fragment manager.
-	                fragmentManager.beginTransaction().add(R.id.frame_container, new FindPeopleFragment(eduChatService), "two").commit();
+	                fragmentManager.beginTransaction().add(R.id.frame_container, new ChatFragment(eduChatService), "two").commit();
 	            }
 	            if(fragmentManager.findFragmentByTag("one") != null){
 	                //if the other fragment is visible, hide it.
@@ -217,7 +219,7 @@ public class MainActivity extends Activity {
 	                fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("three")).commit();
 	            } else {
 	                //if the fragment does not exist, add it to fragment manager.
-	                fragmentManager.beginTransaction().add(R.id.frame_container, new AudioFragment(), "three").commit();
+	                fragmentManager.beginTransaction().add(R.id.frame_container, new AudioFragment(lectionId), "three").commit();
 	            }
 	            
 	            if(fragmentManager.findFragmentByTag("one") != null){
@@ -236,7 +238,7 @@ public class MainActivity extends Activity {
                 fragmentManager.beginTransaction().show(fragmentManager.findFragmentByTag("one")).commit();
             } else {
                 //if the fragment does not exist, add it to fragment manager.
-                fragmentManager.beginTransaction().add(R.id.frame_container, new FindPeopleFragment(eduChatService), "one").commit();
+                fragmentManager.beginTransaction().add(R.id.frame_container, new ChatFragment(eduChatService), "one").commit();
             }
             if(fragmentManager.findFragmentByTag("one") != null){
                 //if the other fragment is visible, hide it.

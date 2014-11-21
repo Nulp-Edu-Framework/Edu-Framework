@@ -2,8 +2,11 @@ package com.eduframework.edroid.ui;
 
 import java.nio.ByteOrder;
 
+import org.jboss.netty.channel.SucceededChannelFuture;
+
 import com.eduframework.edroid.R;
 import com.eduframework.edroid.service.AudioCall;
+import com.eduframework.edroid.service.AudioCall.AudioCallStatus;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -24,33 +27,35 @@ import android.widget.Toast;
 
 public class AudioFragment extends Fragment {
 	
-	public static final String rtmpUrl = "rtmp://192.168.1.7:1935/oflaDemo";
-	public static final String client1 = "test";
-	public static final String client2 = "test";
+	public static final String rtmpUrl = "rtmp://172.24.224.34:1935/oflaDemo";
+	public static final String streamTopic = "presentation";
 	
 	PowerManager.WakeLock wakeLock;
 
 	private boolean capturing = false;
-	private boolean receiving = false;
-
-	private EditText rtmpServerUrlText;
-	private EditText publishingTopicText;
-	private EditText subscribingTopicText;
-	private Button switchTopicButton;
+	private boolean received = false;
 
 	private Button startCaptureButton;
 	private Button stopCaptureButton;
+	
+	private Button startReceivedButton;
+	private Button stopReceivedButton;
 
 	private TextView receivedStatusText;
 
-	private AudioCall audioCall;
+	private AudioCall pablishCall;
+	private AudioCall recivedCall;
 	
 	
 	private int bytesReceived;
 	private int bytesPerSecond;
 	private long bytesReceivedStart;
 	
-	public AudioFragment(){}
+	private Integer presentetionId;
+	
+	public AudioFragment(Integer presentetionId){
+		this.presentetionId = presentetionId;
+	}
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,51 +65,43 @@ public class AudioFragment extends Fragment {
         
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); 
 
-		rtmpServerUrlText = (EditText) rootView.findViewById(R.id.rtmpServerUrl);
-		rtmpServerUrlText.setText(rtmpUrl);
-
-		publishingTopicText = (EditText) rootView.findViewById(R.id.publishingTopic);
-		publishingTopicText.setText(client1);
-
-		subscribingTopicText = (EditText) rootView.findViewById(R.id.subscribingTopic);
-		subscribingTopicText.setText(client2);
-
 		receivedStatusText = (TextView) rootView.findViewById(R.id.receivedStatusText);
-
-		switchTopicButton = (Button) rootView.findViewById(R.id.switchTopicButton);
-		switchTopicButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (!capturing && !receiving) {
-					Editable text1 = publishingTopicText.getText();
-					Editable text2 = subscribingTopicText.getText();
-					publishingTopicText.setText(text2);
-					subscribingTopicText.setText(text1);
-				} else {
-					Toast.makeText(
-							getActivity().getBaseContext(),
-							"stop subscribing and publishing before switching topics",
-							Toast.LENGTH_SHORT).show();
-				}
-			}
-		});
 
 		startCaptureButton = (Button) rootView.findViewById(R.id.startCaptureButton);
 		startCaptureButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (!capturing) {
-					startCall();
+					startCall(rtmpUrl,streamTopic + presentetionId, AudioCallStatus.PUBLISH);
+				}
+			}
+		});
+		
+		startReceivedButton = (Button) rootView.findViewById(R.id.startReceivedButton);
+		startReceivedButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (!received) {
+					startCall(rtmpUrl,streamTopic + presentetionId, AudioCallStatus.SUBSCRIBE);
 				}
 			}
 		});
 
+		stopReceivedButton = (Button) rootView.findViewById(R.id.stopReceivedButton);
+		stopReceivedButton.setEnabled(false);
+		stopReceivedButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				stopCall(AudioCallStatus.SUBSCRIBE);
+			}
+		});
+		
 		stopCaptureButton = (Button) rootView.findViewById(R.id.stopCaptureButton);
 		stopCaptureButton.setEnabled(false);
 		stopCaptureButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stopCall();
+				stopCall(AudioCallStatus.PUBLISH);
 			}
 		});
 
@@ -117,66 +114,91 @@ public class AudioFragment extends Fragment {
         return rootView;
     }
 	
-	public void startCall() {
+	public void startCall(String rtmp, String streamTopic, AudioCall.AudioCallStatus status) {
 
-		String rtmp = rtmpServerUrlText.getText().toString().trim();
-		String pTopic = publishingTopicText.getText().toString().trim();
-		String sTopic = subscribingTopicText.getText().toString().trim();
-
-		if (audioCall != null) {
-			audioCall.finish();
-		}
-
-		audioCall = new AudioCall(getActivity(), rtmp, pTopic, sTopic);
-		wakeLock.acquire();
-		audioCall.start();
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				while (audioCall != null) {
-					if (audioCall.audioSubscriber != null && audioCall.audioSubscriber.overallBytesReceived != 0) {
-						bytesReceived = audioCall.audioSubscriber.overallBytesReceived;
-						if ( bytesReceivedStart == 0 ) {
-							bytesReceivedStart = System.currentTimeMillis();
-						}
-						else {
-							bytesPerSecond = bytesReceived / (((int)(System.currentTimeMillis() - bytesReceivedStart)) / 1000);
-						}
-						getActivity().runOnUiThread(done);
-					}
-					try {
-						Thread.sleep(3000);
-					} catch (Exception e) {}
-				}
+		if(status.equals(AudioCallStatus.SUBSCRIBE)){
+			
+			if (recivedCall != null) {
+				recivedCall.finish();
 			}
 
-			Runnable done = new Runnable() {
+			recivedCall = new AudioCall(getActivity(), rtmp, streamTopic, streamTopic, status);
+			wakeLock.acquire();
+			recivedCall.start();
+			
+			new Thread(new Runnable() {
+
+				@Override
 				public void run() {
-					if (audioCall != null && audioCall.audioSubscriber != null) {
-						receivedStatusText
-								.setText("received "
-										+ (audioCall.audioSubscriber.overallBytesReceived / 1024)
-										+ "Kb ( " + (bytesPerSecond / 1025)  + "Kb/s )");
+					while (recivedCall != null) {
+						if (recivedCall.audioSubscriber != null && recivedCall.audioSubscriber.overallBytesReceived != 0) {
+							bytesReceived = recivedCall.audioSubscriber.overallBytesReceived;
+							if ( bytesReceivedStart == 0 ) {
+								bytesReceivedStart = System.currentTimeMillis();
+							}
+							else {
+								bytesPerSecond = bytesReceived / (((int)(System.currentTimeMillis() - bytesReceivedStart)) / 1000);
+							}
+							getActivity().runOnUiThread(done);
+						}
+						try {
+							Thread.sleep(3000);
+						} catch (Exception e) {}
 					}
 				}
-			};
 
-		}).start();
+				Runnable done = new Runnable() {
+					public void run() {
+						if (recivedCall != null && recivedCall.audioSubscriber != null) {
+							receivedStatusText
+									.setText("Отримано : "
+											+ (recivedCall.audioSubscriber.overallBytesReceived / 1024)
+											+ "Kb ( " + (bytesPerSecond / 1025)  + "Kb/s )");
+						}
+					}
+				};
 
-		startCaptureButton.setEnabled(false);
-		stopCaptureButton.setEnabled(true);
+			}).start();
+			received = true;
+			
+			startReceivedButton.setEnabled(false);
+			stopReceivedButton.setEnabled(true);
+		} else if(status.equals(AudioCallStatus.PUBLISH)){
+			
+			if (pablishCall != null) {
+				pablishCall.finish();
+			}
+
+			pablishCall = new AudioCall(getActivity(), rtmp, streamTopic, streamTopic, status);
+			wakeLock.acquire();
+			pablishCall.start();
+			capturing = true;
+			
+			startCaptureButton.setEnabled(false);
+			stopCaptureButton.setEnabled(true);
+		}
 
 	}
 
-	public void stopCall() {
-		startCaptureButton.setEnabled(true);
-		stopCaptureButton.setEnabled(false);
-		wakeLock.release();
-		if (audioCall != null) {
-			audioCall.finish();
-			audioCall = null;
+	public void stopCall(AudioCallStatus status) {
+		if(status.equals(AudioCallStatus.SUBSCRIBE)){
+			startReceivedButton.setEnabled(true);
+			stopReceivedButton.setEnabled(false);
+			wakeLock.release();
+			if (recivedCall != null) {
+				recivedCall.finish();
+				received = false;
+				recivedCall = null;
+			}
+		} else if (status.equals(AudioCallStatus.PUBLISH)){
+			startCaptureButton.setEnabled(true);
+			stopCaptureButton.setEnabled(false);
+			wakeLock.release();
+			if (pablishCall != null) {
+				pablishCall.finish();
+				capturing = false;
+				pablishCall = null;
+			}
 		}
 	}
 }

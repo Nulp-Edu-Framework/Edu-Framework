@@ -18,8 +18,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UserActivity extends Activity {	
@@ -28,14 +28,18 @@ public class UserActivity extends Activity {
 	private EduFrameworkAPIService eduAPIService;
 	
 	private TextView userFullName;
+	private ProgressBar loadingprgBar;
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.user);
 	        
+	        EduFrameworkAPIService apiService =	EduFrameworkAPIServiceImpl.getInstance(AppConstants.SERVER_ADDRESS);
+	        
+	        loadingprgBar = (ProgressBar) findViewById(R.id.loadingprgBar);
 	        userFullName = (TextView) findViewById(R.id.edtUserFullName);
-	        userFullName.setText("Test");
+	        userFullName.setText(apiService.getCurrentUser().getUserFirstName() + " " + apiService.getCurrentUser().getUserLastName());
 	        
 	        List<LectureDTO> lecturesList = new ArrayList<LectureDTO>();
 	        lectureAdapter = new LectureAdapter(this, R.layout.listview_lecture_row, lecturesList);
@@ -45,12 +49,15 @@ public class UserActivity extends Activity {
 	        
 	        eduAPIService = EduFrameworkAPIServiceImpl.getInstance(AppConstants.SERVER_ADDRESS);
 	        
+	        loadingprgBar.setVisibility(View.VISIBLE);
 	        eduAPIService.getAllLectures(new OnFinishTask() {
 				
 				@SuppressWarnings("unchecked")
 				@Override
 				public void onFinish(Object object) {
 					lectureAdapter.addAll((Collection<? extends LectureDTO>) object);
+					lectureAdapter.notifyDataSetChanged();
+					loadingprgBar.setVisibility(View.GONE);
 				}
 				
 				@Override
@@ -58,7 +65,6 @@ public class UserActivity extends Activity {
 					return null;
 				}
 			});
-	        lectureAdapter.notifyDataSetChanged();
 	        
 	        lecturesListView.setOnItemClickListener(new OnItemClickListener() {
 

@@ -4,10 +4,15 @@ import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+import com.nulp.eduframework.controller.dto.UserDTO;
+import com.nulp.eduframework.domain.User;
 import com.nulp.eduframework.service.UserService;
 
 @Controller
@@ -21,5 +26,11 @@ public class SecureController {
 	@ResponseBody public String getSecureToken(Principal principal) {
 		String securetoken = userService.getUserByUSerName(principal.getName()).getSecureToken();
 		return securetoken == null ? "user not authorized" : securetoken;
+	}
+	
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	@ResponseBody public String getUserByToken(@RequestParam("token") String token) {
+		UserDTO user = userService.getUserByToken(token);
+		return user == null ? null :new Gson().toJson(user);
 	}
 }

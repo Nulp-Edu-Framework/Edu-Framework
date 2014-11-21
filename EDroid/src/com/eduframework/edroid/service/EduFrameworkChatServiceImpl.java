@@ -18,6 +18,8 @@ import android.util.Log;
 import com.eduframework.edroid.dto.MessageDTO;
 import com.eduframework.edroid.model.Message;
 import com.eduframework.edroid.util.AppConstants;
+import com.eduframework.edroid.util.AsyncWorkTask;
+import com.eduframework.edroid.util.OnFinishTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -46,33 +48,48 @@ public class EduFrameworkChatServiceImpl implements EduFrameworkChatService {
 		this.lectionId = lectionId;
 	}
 
-	public Boolean connectToMessagesStream(String eduSecureToken, String serverAddress, Function<MessageDTO> onMessageFunction, Function<String> onErrorFunction) {
-		String lectureId = lectionId.toString();
-		Log.d(AppConstants.DEBUG_TAG_NAME, "Start  connect To Messages Stream");
-		if(!connectionStatus){
-			try {
-				request = client.newRequestBuilder()
-						.method(Request.METHOD.GET).uri(serverAddress + ASYNC_API + "?" + LECTURE_ID_PARAMETER + "=" + lectureId)
-						.header("eduSecureToken", eduSecureToken)
-						.header("senderName", "test")
-						.trackMessageLength(true)
-						.encoder(new EduFrameworkEncoder())
-						.decoder(new EduFrameworkDecoder())
-						.transport(Request.TRANSPORT.WEBSOCKET);
+	public Boolean connectToMessagesStream(final String eduSecureToken, final String serverAddress, final Function<MessageDTO> onMessageFunction, final Function<String> onErrorFunction) {
+		final String lectureId = lectionId.toString();
+		Log.d(AppConstants.DEBUG_TAG_NAME, "Start  connect To Messages Stream");			
+		if(!connectionStatus) {
+			new AsyncWorkTask().execute(new OnFinishTask() {
 				
-				socket.on(Event.MESSAGE, onMessageFunction)
-					.on(Event.ERROR, onErrorFunction)
-					.open(request.build());
-			} catch (IOException e) {
-				Log.e("EduFrameworkChatService", "connection error");
-				connectionStatus = false;
-				return connectionStatus;
-			}
+				@Override
+				public void onFinish(Object object) {
+					connectionStatus = (Boolean) object;
+					Log.d(AppConstants.DEBUG_TAG_NAME, "End  connect To Messages Stream with status : " + connectionStatus);
+				}
+				
+				@Override
+				public Object doInBackground() {
+					Boolean status = true;
+					
+					try {
+						request = client.newRequestBuilder()
+								.method(Request.METHOD.GET).uri(serverAddress + ASYNC_API + "?" + LECTURE_ID_PARAMETER + "=" + lectureId)
+								.header("eduSecureToken", eduSecureToken)
+								.header("senderName", "test")
+								.trackMessageLength(true)
+								.encoder(new EduFrameworkEncoder())
+								.decoder(new EduFrameworkDecoder())
+								.transport(Request.TRANSPORT.WEBSOCKET);
+						
+						socket.on(Event.MESSAGE, onMessageFunction)
+							.on(Event.ERROR, onErrorFunction)
+							.open(request.build());
+					} catch (IOException e) {
+						Log.e("EduFrameworkChatService", "connection error");
+						connectionStatus = false;
+						return connectionStatus;
+					}
+					
+					return status;
+				}
+			});
+		}
 
-			connectionStatus = true;
-		}		
-		Log.d(AppConstants.DEBUG_TAG_NAME, "End  connect To Messages Stream");
-		return connectionStatus;
+		return true;
+		
 	}
 	
 

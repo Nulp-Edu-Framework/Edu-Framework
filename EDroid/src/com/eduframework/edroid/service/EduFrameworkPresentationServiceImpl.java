@@ -19,6 +19,8 @@ import com.eduframework.edroid.model.Message;
 import com.eduframework.edroid.model.PresentationEventMessage;
 import com.eduframework.edroid.model.PresentationStatusMessage;
 import com.eduframework.edroid.util.AppConstants;
+import com.eduframework.edroid.util.AsyncWorkTask;
+import com.eduframework.edroid.util.OnFinishTask;
 import com.google.gson.Gson;
 
 public class EduFrameworkPresentationServiceImpl implements EduFrameworkPresentationService {
@@ -41,37 +43,50 @@ public class EduFrameworkPresentationServiceImpl implements EduFrameworkPresenta
 		this.lectionId = lectionId;
 	}
 	
-	public Boolean connectToPresentationStream(String eduSecureToken, String serverAddress, Function<PresentationDTO> onMessageFunction, Function<String> onErrorFunction) {
+	public Boolean connectToPresentationStream(final String eduSecureToken, final String serverAddress, final Function<PresentationDTO> onMessageFunction, final Function<String> onErrorFunction) {
 		
-		String lectureId = lectionId.toString();
+		final String lectureId = lectionId.toString();
 		Log.d(AppConstants.DEBUG_TAG_NAME, "Start Connect To Presentation Stream");
 		
-		if (!connectionStatus) {
-			try {
-				request = client.newRequestBuilder()
-						.method(Request.METHOD.GET)
-						.uri(serverAddress + ASYNC_API + "?" + LECTURE_ID_PARAMETER + "=" + lectureId)
-						.header("eduSecureToken", eduSecureToken)
-						.header("senderName", "test")
-						.trackMessageLength(true)
-						.encoder(new EduFrameworkEncoder())
-						.decoder(new EduFrameworkDecoder())
-						.transport(Request.TRANSPORT.WEBSOCKET);
+		if(!connectionStatus) {
+			new AsyncWorkTask().execute(new OnFinishTask() {
+				
+				@Override
+				public void onFinish(Object object) {
+					connectionStatus = (Boolean) object;
+					Log.d(AppConstants.DEBUG_TAG_NAME, "End Connect To Presentation Stream with status : " + connectionStatus);
+				}
+				
+				@Override
+				public Object doInBackground() {
+					
+					Boolean status = true;
+					
+					try {
+						request = client.newRequestBuilder()
+								.method(Request.METHOD.GET)
+								.uri(serverAddress + ASYNC_API + "?" + LECTURE_ID_PARAMETER + "=" + lectureId)
+								.header("eduSecureToken", eduSecureToken)
+								.header("senderName", "test")
+								.trackMessageLength(true)
+								.encoder(new EduFrameworkEncoder())
+								.decoder(new EduFrameworkDecoder())
+								.transport(Request.TRANSPORT.WEBSOCKET);
 
-				socket.on(Event.MESSAGE, onMessageFunction)
-					  .on(Event.ERROR, onErrorFunction)
-					  .open(request.build());
-			} catch (IOException e) {
-				Log.e("EduFrameworkChatService", "connection error");
-				connectionStatus = false;
-				return connectionStatus;
-			}
-
-			connectionStatus = true;
+						socket.on(Event.MESSAGE, onMessageFunction)
+							  .on(Event.ERROR, onErrorFunction)
+							  .open(request.build());
+					} catch (IOException e) {
+						Log.e("EduFrameworkChatService", "connection error");
+						status = false;
+					}
+					
+					return status;
+				}
+			});
 		}
-		
-		Log.d(AppConstants.DEBUG_TAG_NAME, "End Connect To Presentation Stream");
-		return connectionStatus;
+
+		return true;
 	}
 
 	public Boolean nextSlide() {

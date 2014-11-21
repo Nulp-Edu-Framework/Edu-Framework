@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 public class LoginActivity extends Activity {
 	
@@ -23,6 +24,7 @@ public class LoginActivity extends Activity {
 	private EditText userName;
 	private EditText password;
 	private Button loginButton;
+	private ProgressBar loadingprgBar;
 	
 	private EduFrameworkAPIService eduAPIService; 
 	
@@ -34,12 +36,14 @@ public class LoginActivity extends Activity {
         userName = (EditText) findViewById(R.id.loginUserName);
         password = (EditText) findViewById(R.id.loginPassword);
         loginButton = (Button) findViewById(R.id.btnLogin);
+        loadingprgBar = (ProgressBar) findViewById(R.id.loadingprgBar);
 
         eduAPIService = EduFrameworkAPIServiceImpl.getInstance(AppConstants.SERVER_ADDRESS);
         
         loginButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
+				loadingprgBar.setVisibility(View.VISIBLE);
 				String userLogin = userName.getText().toString();
 				String userPassword = password.getText().toString();
 				
@@ -74,4 +78,12 @@ public class LoginActivity extends Activity {
 			
 		});
     }
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		loadingprgBar.setVisibility(View.GONE);
+	}
+	
+	
 }

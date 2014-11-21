@@ -19,6 +19,8 @@ public class AudioCall extends Thread {
 	
 	private static final String TAG = "AudioCall";
 	
+	public enum AudioCallStatus { PUBLISH, SUBSCRIBE }
+	
 	private Context context;
 	private String rtmpServerUrl;
 	private String publishingTopic;
@@ -36,39 +38,46 @@ public class AudioCall extends Thread {
 	public AudioPublisher audioPublisher;
 	public AudioSubscriber audioSubscriber;
 	
+	private AudioCallStatus status;
 	
-	
-	public AudioCall( Context context, String rtmpUrl, String pTopic, String sTopic ) {
+	public AudioCall( Context context, String rtmpUrl, String pTopic, String sTopic, AudioCallStatus status ) {
 		this.context = context;
 		this.rtmpServerUrl = rtmpUrl;
 		this.publishingTopic = pTopic;
 		this.subscribingTopic = sTopic;
+		this.status = status;
 	}
 	
 	
 	
 	@Override
 	public void run() {
-		startPublish();
-		startSubscribe();
+		if(status.equals(AudioCallStatus.PUBLISH)) {
+			startPublish();
+		} else if (status.equals(AudioCallStatus.SUBSCRIBE)) {
+			startSubscribe();
+		}
 	}
 	
 	
 	public void finish() {
 		Log.i(TAG, "[finish()]");
-		try {
-			stopCapture();
-		}
-		catch( Exception e ) {
-			Log.e(TAG, "can not stop publishing", e);
+		if(status.equals(AudioCallStatus.PUBLISH)) {
+			try {
+				stopCapture();
+			}
+			catch( Exception e ) {
+				Log.e(TAG, "can not stop publishing", e);
+			}
+		} else if (status.equals(AudioCallStatus.SUBSCRIBE)) {
+			try {
+				stopSubscribe();
+			}
+			catch( Exception e ) {
+				Log.e(TAG, "can not stop subscribing", e);
+			}
 		}
 		
-		try {
-			stopSubscribe();
-		}
-		catch( Exception e ) {
-			Log.e(TAG, "can not stop subscribing", e);
-		}
 	}
 	
 	public void startPublish() {
