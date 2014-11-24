@@ -7,33 +7,31 @@
 						http://www.springframework.org/schema/security
 						http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
-	<http pattern="/async/api/**" security="none"/>
-	
-	<beans:bean 
-	    id="EduLogoutSuccessHandler"
-		class="com.nulp.eduframework.service.EduLogoutSuccessHandler">
-	</beans:bean>
-	
-	<beans:bean 
-	    id="EduAuthenticationSuccessHandler"
+	<http pattern="/async/api/**" security="none" />
+
+	<beans:bean id="EduAuthenticationSuccessHandler"
 		class="com.nulp.eduframework.service.EduAuthenticationSuccessHandler">
 	</beans:bean>
-		
+
 	<http auto-config="true">
-	    <logout success-handler-ref="EduLogoutSuccessHandler" />
-	    <form-login authentication-success-handler-ref="EduAuthenticationSuccessHandler" />
-		<intercept-url pattern="/**" access="ROLE_USER" />
-		<http-basic/>
+		<intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/**"
+			access="ROLE_USER, ROLE_ADMIN, ROLE_LECTOR" />
+
+		<form-login login-page="/login" default-target-url="/"
+			authentication-failure-url="/login?error"
+			authentication-success-handler-ref="EduAuthenticationSuccessHandler" />
+
+		<http-basic />
 	</http>
 
 	<authentication-manager>
-	  <authentication-provider>
-		<jdbc-user-service data-source-ref="dataSource"
-		  users-by-username-query=
-		    "select username,password, enabled from users where username=?"
-		  authorities-by-username-query=
-		    "select username, role from user_roles where username =?  " />
-	  </authentication-provider>
+		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select username,password, enabled from users where username=?"
+				authorities-by-username-query="select username, role from user_roles where username =?  " />
+		</authentication-provider>
 	</authentication-manager>
-	
+
 </beans:beans>

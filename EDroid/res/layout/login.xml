@@ -5,8 +5,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="10dip"
-    android:background="@drawable/tile_bg">
+    android:background="@drawable/bg_messages"
+    android:padding="10dip">
     
     <ProgressBar
         android:id="@+id/loadingprgBar"
@@ -16,6 +16,26 @@
         android:visibility="gone" />
     
     <!-- Email Label -->
+    
+    
+    <ScrollView
+        android:id="@+id/ScrollView01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+        
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical" >
+        
+    <ImageView
+        android:id="@+id/presentationScreen"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:layout_margin="10dp"
+        android:visibility="visible" />
 
     <TextView
         android:layout_width="fill_parent"
@@ -56,6 +76,8 @@
         android:background="@color/bg_btn_join"
         android:text="@string/btn_login"
         android:textColor="@color/white" />
+    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout><!-- Login Form Ends -->
 

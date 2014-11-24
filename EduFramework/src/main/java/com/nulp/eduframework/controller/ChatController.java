@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.nulp.eduframework.controller.dto.LectureDTO;
@@ -18,11 +19,10 @@ import com.nulp.eduframework.util.PresentationConverter;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
  
+
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/api/v1/chat/")
 public class ChatController {
 
+	public static final String CONTENT_FOLDER_PATH = "/lectures";
+	
 	@Autowired
 	private LectureChatService lectureChatService;
 
@@ -45,12 +47,7 @@ public class ChatController {
     	return gson.toJson(lectureChatList);
     }
 	
-       
-	    /**
-	     * Path of the file to be downloaded, relative to application's directory
-	     */
-	    private String filePath = "/lectures";
-	
+    
 	@RequestMapping(value="/get/presentation", method = RequestMethod.GET)
 	@ResponseBody public byte[] doDownload(@RequestParam("lectureId") String lectureId, HttpServletRequest request, HttpServletResponse response) throws IOException {
  
@@ -60,7 +57,7 @@ public class ChatController {
         System.out.println("appPath = " + appPath);
  
         // construct the complete absolute path of the file
-        String fullPath = appPath + filePath + File.separator + lectureId + "/lecture.zip";      
+        String fullPath = appPath + CONTENT_FOLDER_PATH + File.separator + lectureId + "/lecture.zip";      
         File downloadFile = new File(fullPath);
         
         byte[] bytes = org.springframework.util.FileCopyUtils.copyToByteArray(downloadFile);
@@ -83,7 +80,31 @@ public class ChatController {
     }
 	
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
-	public @ResponseBody String uploadFileHandler(HttpServletRequest request, @RequestParam("file") MultipartFile file, @RequestParam(value = "chatName") String chatName) {
+	public ModelAndView uploadFileHandler(
+			HttpServletRequest request, 
+			@RequestParam(required = false) String source,
+			@RequestParam(required = false) Boolean edit, 
+			@RequestParam(required = false) Integer id, 
+			@RequestParam MultipartFile file, 
+			@RequestParam String chatName) {
+
+		Boolean isCreated = false;
+		
+		Integer lectureId = null;
+		LectureChat chat = null;
+		
+		if(edit!=null && edit && id!=null){
+			lectureId = id;
+			chat = lectureChatService.getLectureChatById(lectureId);
+			chat.setName(chatName);
+			if (file.isEmpty()) {
+				lectureChatService.addLectureChat(chat);
+				isCreated = true;
+			}
+		} else if (!file.isEmpty()) {
+			lectureId = createLecture(chatName);
+			chat = lectureChatService.getLectureChatById(lectureId);
+		}
 
 		if (!file.isEmpty()) {
 			try {
@@ -97,9 +118,7 @@ public class ChatController {
 					dir.mkdirs();
 				}
 
-				Integer lectureId = createLecture(chatName);
-				
-				if(lectureId != null) {
+				if(lectureId != null && chat != null) {
 				
 					// Create the file on server
 					String dirPath =  dir.getAbsolutePath() + File.separator + lectureId;
@@ -121,20 +140,32 @@ public class ChatController {
 					
 					System.out.println("READED : " + slidesCount);
 
-					LectureChat chat = lectureChatService.getLectureChatById(lectureId);
-
 					chat.setStepCount(slidesCount);
 					lectureChatService.addLectureChat(chat);
 				
 				}
 				
-				return "You successfully uploaded file=" + file.getOriginalFilename();
+				isCreated = true;
 			} catch (Exception e) {
-				return "You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage();
+				isCreated = false;
 			}
-		} else {
-			return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";
 		}
+		
+		ModelAndView model = new ModelAndView("redirect:/lecture");
+		
+		if(source != null && source.equals("admin")){
+			if(edit!=null && edit){
+				model = new ModelAndView("redirect:/editLection?lectionId="+id);
+			} else {
+				model = new ModelAndView("redirect:/createLection");	
+			}
+
+		} else {
+			model = new ModelAndView("redirect:/lecture");
+		}
+
+		model.addObject("isCreated", isCreated);
+		return model;
 	}
 	
 	private Integer createLecture ( String lectureName) {

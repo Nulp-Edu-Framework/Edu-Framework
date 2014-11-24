@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/tile_bg"> >
 
+
     <ScrollView
         android:id="@+id/ScrollView01"
         android:layout_width="fill_parent"
@@ -14,6 +15,13 @@
             android:layout_height="fill_parent"
             android:gravity="center_vertical"
             android:orientation="vertical" >
+            
+               <ImageView
+        android:id="@+id/presentationScreen"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/mic_launcher"
+        android:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,6 +34,9 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@color/bg_btn_join"
+                    android:textColor="@color/white"
+                    android:layout_margin="10dp"
                     android:text="Транслювати" >
                 </Button>
 
@@ -33,7 +44,10 @@
                     android:id="@+id/stopCaptureButton"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
+                    android:background="@color/bg_btn_join"
+                    android:textColor="@color/white"
                     android:layout_weight="1"
+                    android:layout_margin="10dp"
                     android:text="Зупинити" >
                 </Button>
             </LinearLayout>
@@ -49,6 +63,9 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@color/bg_btn_join"
+                    android:textColor="@color/white"
+                    android:layout_margin="10dp"
                     android:text="Під'єднатись" >
                 </Button>
 
@@ -56,7 +73,10 @@
                     android:id="@+id/stopReceivedButton"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
+                    android:background="@color/bg_btn_join"
+                    android:textColor="@color/white"
                     android:layout_weight="1"
+                    android:layout_margin="10dp"
                     android:text="Від'єднатись" >
                 </Button>
             </LinearLayout>
@@ -76,7 +96,6 @@
                     android:padding="5px"
                     android:radius="10px"
                     android:text="0kb"
-                    android:textColor="@color/title_gray"
                     android:textStyle="bold" >
                 </TextView>
             </LinearLayout>

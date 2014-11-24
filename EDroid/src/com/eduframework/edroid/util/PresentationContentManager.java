@@ -1,6 +1,7 @@
 package com.eduframework.edroid.util;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
@@ -95,7 +96,9 @@ public class PresentationContentManager {
 	        });
 			
 			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			options.inJustDecodeBounds = false;
+			options.inPreferredConfig = Config.RGB_565;
+			options.inDither = true;
 			
 			for (int i=0; i < images.length; i++)
 			{

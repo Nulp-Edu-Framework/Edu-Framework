@@ -35,10 +35,8 @@
 	<!-- Непосредственно бин dataSource -->
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-		p:driverClassName="${jdbc.driverClassName}" 
-		p:url="${jdbc.databaseurl}"
-		p:username="${jdbc.username}" 
-		p:password="${jdbc.password}" />
+		p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.databaseurl}"
+		p:username="${jdbc.username}" p:password="${jdbc.password}" />
 
 	<!-- Настройки фабрики сессий Хибернейта -->
 	<bean id="sessionFactory"

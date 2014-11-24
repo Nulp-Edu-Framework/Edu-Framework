@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.nulp.eduframework.controller.dto.LectureDTO;
@@ -40,6 +38,13 @@ public class LectureChatDaoImpl extends EduFrameworkDao implements LectureChatDa
 		String queryStr = "select NEW com.nulp.eduframework.controller.dto.LectureDTO(lecture.id, lecture.name) from LectureChat as lecture";
 		Query query = session.createQuery(queryStr);
 		return query.list();
+	}
+
+	@Override
+	public void deleteLecture(LectureChat lecture, Session session) {
+		session = checkSession(session);
+		session.delete(lecture);
+		session.flush();
 	}
 
 }

@@ -26,7 +26,7 @@ public class UserDetails {
 	@Column(name = "lastname")
 	private String lastname;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable=false)
 	private User user;
 	
@@ -52,5 +52,9 @@ public class UserDetails {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public String getFullName (){
+		return firstname + " " + lastname;
 	}
 }

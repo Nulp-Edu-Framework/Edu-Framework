@@ -4,13 +4,23 @@ public class UserDTO {
 	private String userLogin;
 	private String userFirstName;
 	private String userLastName;
+	private String userRole;
 	
-	public UserDTO(String userLogin, String userFirstName, String userLastName) {
+	public UserDTO(String userLogin, String userFirstName, String userLastName, String userRole) {
 		this.userLogin = userLogin;
 		this.userFirstName = userFirstName;
 		this.userLastName = userLastName;
+		this.userRole = userRole;
 	}
 	
+	public String getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
+
 	public String getUserLogin() {
 		return userLogin;
 	}

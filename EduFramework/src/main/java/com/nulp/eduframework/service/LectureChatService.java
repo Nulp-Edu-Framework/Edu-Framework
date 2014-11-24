@@ -16,4 +16,6 @@ public interface LectureChatService {
 	public void addLectureChat(LectureChat lectureChat, Session session);
 	public List<LectureDTO> getLectureDTOList ();
 	public List<LectureDTO> getLectureDTOList (Session session);
+	public void deleteLecture(LectureChat lecture, Session session);
+	public void deleteLecture(LectureChat lecture);
 }

@@ -1,5 +1,7 @@
 package com.nulp.eduframework.service;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,26 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void addUser(User user) {
 		userDao.addUser(user, null);
+	}
+
+	@Transactional
+	public List<User> getUsersList(Session session) {
+		return userDao.getUsersList(session);
+	}
+	
+	@Transactional
+	public List<User> getUsersList() {
+		return userDao.getUsersList(null);
+	}
+
+	@Transactional
+	public void deleteUser(User user) {
+		userDao.deleteUser(user, null);
+	}
+
+	@Transactional
+	public void deleteUser(User user, Session session) {
+		userDao.deleteUser(user, session);
 	}
 
 }

@@ -6,7 +6,10 @@ import org.jboss.netty.channel.SucceededChannelFuture;
 
 import com.eduframework.edroid.R;
 import com.eduframework.edroid.service.AudioCall;
+import com.eduframework.edroid.service.EduFrameworkAPIService;
+import com.eduframework.edroid.service.EduFrameworkAPIServiceImpl;
 import com.eduframework.edroid.service.AudioCall.AudioCallStatus;
+import com.eduframework.edroid.util.AppConstants;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -27,7 +30,7 @@ import android.widget.Toast;
 
 public class AudioFragment extends Fragment {
 	
-	public static final String rtmpUrl = "rtmp://172.24.224.34:1935/oflaDemo";
+	public static final String rtmpUrl = AppConstants.RTMP_SERVER;
 	public static final String streamTopic = "presentation";
 	
 	PowerManager.WakeLock wakeLock;
@@ -65,9 +68,21 @@ public class AudioFragment extends Fragment {
         
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); 
 
+        final EduFrameworkAPIService eduAPIService = EduFrameworkAPIServiceImpl.getInstance(AppConstants.SERVER_ADDRESS);
+        
 		receivedStatusText = (TextView) rootView.findViewById(R.id.receivedStatusText);
 
 		startCaptureButton = (Button) rootView.findViewById(R.id.startCaptureButton);
+		startReceivedButton = (Button) rootView.findViewById(R.id.startReceivedButton);		
+		stopReceivedButton = (Button) rootView.findViewById(R.id.stopReceivedButton);
+		stopCaptureButton = (Button) rootView.findViewById(R.id.stopCaptureButton);
+
+		
+        if(eduAPIService.getCurrentUser().getUserRole().equals("ROLE_USER")){
+        	startCaptureButton.setVisibility(View.GONE);
+        	stopCaptureButton.setVisibility(View.GONE);
+        }
+        
 		startCaptureButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -77,7 +92,7 @@ public class AudioFragment extends Fragment {
 			}
 		});
 		
-		startReceivedButton = (Button) rootView.findViewById(R.id.startReceivedButton);
+
 		startReceivedButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -87,7 +102,7 @@ public class AudioFragment extends Fragment {
 			}
 		});
 
-		stopReceivedButton = (Button) rootView.findViewById(R.id.stopReceivedButton);
+		
 		stopReceivedButton.setEnabled(false);
 		stopReceivedButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -96,7 +111,6 @@ public class AudioFragment extends Fragment {
 			}
 		});
 		
-		stopCaptureButton = (Button) rootView.findViewById(R.id.stopCaptureButton);
 		stopCaptureButton.setEnabled(false);
 		stopCaptureButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -151,7 +165,7 @@ public class AudioFragment extends Fragment {
 					public void run() {
 						if (recivedCall != null && recivedCall.audioSubscriber != null) {
 							receivedStatusText
-									.setText("–û—Ç—Ä–∏–º–∞–Ω–æ : "
+									.setText("ŒÚËÏ‡ÌÓ : "
 											+ (recivedCall.audioSubscriber.overallBytesReceived / 1024)
 											+ "Kb ( " + (bytesPerSecond / 1025)  + "Kb/s )");
 						}

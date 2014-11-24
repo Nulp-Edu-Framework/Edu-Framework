@@ -56,7 +56,15 @@ public class LectureChatServiceImpl implements LectureChatService {
 	public List<LectureDTO> getLectureDTOList(Session session) {
 		return lectureChatDao.getLectureDTOList(session);
 	}
-	
-	
+
+	@Transactional
+	public void deleteLecture(LectureChat lecture, Session session) {
+		lectureChatDao.deleteLecture(lecture, session);
+	}
+
+	@Transactional
+	public void deleteLecture(LectureChat lecture) {
+		lectureChatDao.deleteLecture(lecture, null);
+	}
 
 }

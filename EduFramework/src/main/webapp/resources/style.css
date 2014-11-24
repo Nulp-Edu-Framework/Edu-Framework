@@ -27,25 +27,18 @@
 	h2 {
 		font-size: 1.6em;
 		letter-spacing: -1px;
-		margin-bottom: 1em;
 	}
 
 	h3,h4 {
 		color: #283121;
-		margin-bottom: 0.5em;
 	}
 
 	h3 {
 		font-size: 1.2em;
-		margin-bottom: 0.8em;
 	}
 
 	h4 {
 		font-size: 1em;
-	}
-
-	p, ul {
-		margin-bottom: 1.25em;
 	}
 
 	p {
@@ -54,15 +47,6 @@
 
 	strong {
 		color: #474e43;
-	}
-
-	img.left {
-		float: left;
-		margin: 2px 1.25em 0 0;
-	}
-
-	img.top {
-		margin: 4px 0 2.25em 0;
 	}
 
 	ul {
@@ -145,6 +129,7 @@
 		letter-spacing: -1px;
 		border: solid 1px #006e8b;
 		box-shadow: inset 0px 0px 0px 1px #18a8c8;
+		line-height: 25px;
 	}
 
 	.button:hover {
@@ -156,10 +141,15 @@
 		background-image: -o-linear-gradient(top, #1b9fbe, #118eb1);
 		background-image: linear-gradient(top, #1b9fbe, #118eb1);
 		box-shadow: inset 0px 0px 0px 1px #3ecceb;
+		line-height: 25px;
 	}
 
-.inline {
+.inline, .editInline {
 	float: left;
+}
+
+.editInline {
+	margin: 10px 0px 10px 0px;
 }
 
 .clearBoth {
@@ -167,8 +157,85 @@
 }
 
 #loadPresentationContent {
-	padding-top: 10px;
 	display: inline-block;
+    padding: 15px 10px 15px 10px;
+}
+
+#editFormContainer {
+	padding: 15px 10px 15px 10px;
+}
+
+#editForm {
+	width: 435px;
+}
+
+.editForm {
+	width : 435px;
+}
+
+.loginForm {
+ 	margin: 100px auto;
+    text-align: center;
+    width: 680px;
+}
+
+.editInput {
+	height: 25px;
+	width: 250px;
+	margin: 10px 0px 10px 0px;
+}
+
+.loginInput {
+	height: 25px;
+	width: 315px;
+	margin: 10px 0px 10px 0px;
+}
+
+.loginBtn {
+	width: 185px;
+	float: right;
+	margin-right: 92px;
+	margin-top: 10px;
+}
+
+.loginError {
+    color: red;
+    font-family: Arial;
+    font-size: 25px;
+    margin: 10px;
+}
+
+.editLable {
+	line-height: 25px;
+	width: 180px;
+	display: inline-block;
+	margin: 10px 0px 10px 0px;
+}
+
+.editPresentLable {
+	min-width: 160px;
+	max-width: 160px;
+	line-height: 25px;
+	display: inline-block;
+	margin-top: 3px;
+}
+.editPresentInput {
+	height: 25px;
+	width: 250px;
+	margin: 10px 0px 10px 0px;
+}
+
+.editPresentForm {
+	width: 425px;
+}
+
+#lectureName{
+	width: 261px;
+}
+
+.editBtn {
+	float: right;
+	margin-right: 3px;
 }
 
 .createLecture {
@@ -177,6 +244,7 @@
 
 .load-content-file-lable {
 	min-width: 219px;
+	padding-bottom: 5px;
 }
 .load-content-file-lable, .load-content-lecture-lable {
 	line-height: 1.5em;
@@ -185,11 +253,12 @@
 
 .load-content-lecture-lable {
 	margin-bottom: 0.5em;
-	line-height: 1.2em;
+	line-height: 1.8em;
 }
 
 .load-content-lecture-input {
 	width: 321px;
+	height: 30px;
 }
 
 .loadBtn {
@@ -209,4 +278,110 @@ input.load-content-file-input {
     right: 85px;
     width: 85px;
 	filter: alpha(opacity=0);
+}
+
+input.create-presentation-file-input {
+    bottom: 28px;
+    cursor: pointer;
+    height: 30px;
+    left: 163px;
+    line-height: 25px;
+    margin: 0 1px 0 0;
+    opacity: 0;
+    position: relative;
+    width: 125px;
+}
+
+#createLectionFakeBtn {
+    float: right;
+    height: 30px;
+    line-height: 25px;
+    width: 125px;
+    margin: 0px 10px 0px 0px;
+}
+
+#createLectionLoadBtn {
+	float: right;
+    height: 30px;
+    line-height: 25px;
+    width: 125px;
+    margin: 0px 1px 0px 0px;
+}
+
+.titleSection {
+	border-bottom: 1px solid #ced0b7;
+	padding-bottom: 10px;
+}
+
+.loginTitle {
+	border-bottom: 1px solid #ced0b7;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+	text-align: center;
+	font-size: 30px;
+}
+
+#lectionList, #usersList {
+	padding: 10px 10px 20px 10px;
+}
+
+.newElement {
+	font-size: 14px;
+	float: right;
+	padding-top: 5px;
+	text-decoration: none;
+}
+
+.newElement:hover {
+	text-decoration: underline;
+}
+
+.eduList ul {
+	list-style: none;
+}
+
+.eduList ul li a {
+	display: block;
+	text-decoration: none;
+	background-color: #FFFFFF;
+	line-height: 30px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #CCCCCC;
+	padding-left: 10px;
+	cursor: pointer;
+}
+
+.eduList ul li a:hover {
+	color: #FFFFFF;
+	background-image: url(../resources/images/hover.png);
+	background-repeat: repeat-x;
+}
+
+.eduList ul li a strong {
+	margin-right: 10px;
+}
+
+#createSucsess, .actionSucsess {
+	padding-bottom: 10px;
+	color: green;
+	font-size: xx-large;
+}
+
+#createError, .actionError {
+	padding-bottom: 10px;
+	color: red;
+	font-size: xx-large;
+}
+
+.invisible {
+	display: none;
+}
+
+.visible {
+	display: inline;
+}
+
+.sucsess {
+	color: green;
 }

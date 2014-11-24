@@ -24,7 +24,9 @@ public class SecureController {
 
 	@RequestMapping(value = "/securetoken", method = RequestMethod.GET)
 	@ResponseBody public String getSecureToken(Principal principal) {
-		String securetoken = userService.getUserByUSerName(principal.getName()).getSecureToken();
+		User user = userService.getUserByUSerName(principal.getName());
+		String securetoken = user.getSecureToken();
+		System.out.println(user.getUserRole().getRole());
 		return securetoken == null ? "user not authorized" : securetoken;
 	}
 	

@@ -63,12 +63,18 @@ public class PresentationFragment extends Fragment {
  
         View rootView = inflater.inflate(R.layout.fragment_presentation, container, false);
         
+        final EduFrameworkAPIService eduAPIService = EduFrameworkAPIServiceImpl.getInstance(AppConstants.SERVER_ADDRESS);
+
         presentationScreen = (ImageView) rootView.findViewById(R.id.presentationScreen);
         loadingContentprgBar = (ProgressBar) rootView.findViewById(R.id.loadingContentprgBar);
         next = (Button) rootView.findViewById(R.id.button1);
         prev = (Button) rootView.findViewById(R.id.button2);
+        
+        if(eduAPIService.getCurrentUser().getUserRole().equals("ROLE_USER")){
+        	next.setVisibility(View.GONE);
+        	prev.setVisibility(View.GONE);
+        }
                
-		final EduFrameworkAPIService eduAPIService = EduFrameworkAPIServiceImpl.getInstance(AppConstants.SERVER_ADDRESS);
 		eduAPIService.loadPresentationContent(eduPresentationService.getLectureId(), new OnFinishTask() {
 			
 			@Override

@@ -9,17 +9,19 @@ CREATE  TABLE users (
   user_id INT(11) NOT NULL AUTO_INCREMENT,
   username VARCHAR(45) NOT NULL UNIQUE,
   password VARCHAR(45) NOT NULL ,
+  secureToken VARCHAR(45) UNIQUE,
   enabled TINYINT NOT NULL DEFAULT 1 ,
   PRIMARY KEY (user_id));
 
 CREATE TABLE user_roles (
   user_role_id INT(11) NOT NULL AUTO_INCREMENT,
+  user_id INT(11) NOT NULL,
   username VARCHAR(45) NOT NULL,
   ROLE VARCHAR(45) NOT NULL,
   PRIMARY KEY (user_role_id),
   UNIQUE KEY uni_username_role (ROLE,username),
-  KEY fk_username_idx (username),
-  CONSTRAINT fk_username FOREIGN KEY (username) REFERENCES users (username));
+  KEY fk_role_user_idx (user_id),
+  CONSTRAINT fk_role_user FOREIGN KEY (user_id) REFERENCES users (user_id));
 
 CREATE  TABLE users_details (
   user_details_id INT(11) NOT NULL AUTO_INCREMENT,
@@ -36,22 +38,27 @@ CREATE  TABLE lecture_message (
   lecture_id INT(11) NOT NULL,
   message VARCHAR(255) NOT NULL ,
   PRIMARY KEY (message_id),
-  CONSTRAINT fk_user_lecture_id FOREIGN KEY (user_id) REFERENCES users (user_id),
-  CONSTRAINT fk_lecture_id FOREIGN KEY (lecture_id) REFERENCES CHAT (id)
+  CONSTRAINT fk_user_messages_id FOREIGN KEY (user_id) REFERENCES users (user_id),
+  CONSTRAINT fk_lecture_messages_id FOREIGN KEY (lecture_id) REFERENCES CHAT (id)
 );
 
 INSERT INTO users(username,password,enabled)
-VALUES ('test','test', TRUE);
+VALUES ('user','user', TRUE);
 INSERT INTO users(username,password,enabled)
-VALUES ('test2','test2', TRUE);
+VALUES ('lector','lector', TRUE);
+INSERT INTO users(username,password,enabled)
+VALUES ('admin','admin', TRUE);
  
-INSERT INTO user_roles (username, ROLE)
-VALUES ('test', 'ROLE_USER');
-INSERT INTO user_roles (username, ROLE)
-VALUES ('test2', 'ROLE_USER');
+INSERT INTO user_roles (user_id, username, ROLE)
+VALUES (1, 'user', 'ROLE_USER');
+INSERT INTO user_roles (user_id, username, ROLE)
+VALUES (2, 'lector', 'ROLE_LECTOR');
+INSERT INTO user_roles (user_id, username, ROLE)
+VALUES (3, 'admin', 'ROLE_ADMIN');
 
 INSERT INTO users_details(user_id,firstname,lastname)
-VALUES (1, 'test_first', 'test_last');
-
+VALUES (1, 'Yurii', 'Buhryn');
 INSERT INTO users_details(user_id,firstname,lastname)
-VALUES (2, 'test_2', 'test_l2');
+VALUES (2, 'Lector', 'Prepod');
+INSERT INTO users_details(user_id,firstname,lastname)
+VALUES (3, 'Admin', 'Admin');

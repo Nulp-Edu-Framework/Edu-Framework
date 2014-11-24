@@ -12,4 +12,5 @@ public interface LectureChatDao {
 	public List<LectureDTO> getLectureDTOList (Session session);
 	public LectureChat getLectureChatById(Integer id, Session session);
 	public void addLectureChat(LectureChat lectureChat, Session session);
+	public void deleteLecture(LectureChat lecture, Session session);
 }
